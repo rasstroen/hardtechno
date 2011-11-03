@@ -10,6 +10,9 @@ class news_module extends CommonModule {
 		switch ($action) {
 			case 'list':
 				switch ($mode) {
+					case 'columns':
+						$this->_listDefault();
+						break;
 					default:
 						$this->_listDefault();
 						break;

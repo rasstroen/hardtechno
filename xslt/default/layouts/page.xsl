@@ -12,7 +12,6 @@
 	<xsl:include href="../module.xsl"/>
 	<xsl:include href="../helpers.xsl" />
 	<xsl:include href="../partials/user.xsl"/>
-	<xsl:include href="../partials/feature.xsl"/>
-	<xsl:include href="../partials/group.xsl"/>
+	<xsl:include href="../partials/news.xsl"/>
 	<xsl:include href="../partials/misc.xsl"/>
 </xsl:stylesheet>

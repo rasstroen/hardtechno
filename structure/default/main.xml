@@ -11,7 +11,7 @@
 	</data>
 	<blocks>
 		<content>
-			<module name="news" action="list">
+			<module name="news" action="list" mode="columns">
 				<param name="limit" type="var" value="6" />
 			</module>
 			<module name="releases" action="list">
