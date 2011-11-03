@@ -34,7 +34,7 @@ $query = 'SELECT * FROM `module_news` WHERE `type`=1';
 $news = Database::sql2array($query, 'id');
 foreach ($news as $id => $newsitem) {
 	$object = Releases::getInstance()->getById($id);
-	/* @var $object Newsitem */
+	/* @var $object Release */
 	$data = $newsitem;
 	$data['update_time'] = strtotime($data['update_time']);
 	$object->_create($data);

@@ -1,24 +1,89 @@
 <?php
 
-class Release extends Collection {
+class Release extends BaseObjectClass {
 
-	public $className = 'Release';
-	public $tableName = 'releases';
-	public $itemName = 'release';
-	public $itemsName = 'releases';
+	public $id;
+	public $loaded = false;
+	public $data;
+	public $fieldsMap = array(
+	    'id' => 'int',
+	    'date' => 'int',
+	    'update_time' => 'int',
+	    'image' => 'string',
+	    'title' => 'string',
+	    'anons' => 'html',
+	    'html' => 'html',
+	    'enabled' => 'string',
+	    'comment_count' => 'int',
+	);
 
-	public static function getInstance() {
-		if (!self::$releases_instance) {
-			self::$releases_instance = new Releases();
+	function __construct($id, $data = false) {
+		$this->id = $id;
+		if ($data) {
+			if ($data == 'empty') {
+				$this->loaded = true;
+				$this->exists = false;
+			}
+			$this->load($data);
 		}
-		return self::$releases_instance;
 	}
 
-	public function _create($data) {
-		$item = new $this->className(0);
-		$createdId = $item->_create($data);
-		header('Location:' . Config::need('www_path') . '/releases/' . $createdId);
-		exit();
+	function dropCache() {
+		Releases::getInstance()->dropCache($this->id);
+		$this->loaded = false;
+	}
+
+	function _create($data) {
+		$tableName = Releases::getInstance()->tableName;
+		$this->dropCache();
+		return parent::_create($data, $tableName);
+	}
+
+	function _update($data) {
+		$tableName = Releases::getInstance()->tableName;
+		$this->dropCache();
+		return parent::_update($data, $tableName);
+	}
+
+	function load($data = false) {
+		if ($this->loaded)
+			return false;
+		if (!$data) {
+			$query = 'SELECT * FROM `releases` WHERE `id`=' . $this->id;
+			$this->data = Database::sql2row($query);
+		}else
+			$this->data = $data;
+		$this->exists = true;
+		$this->loaded = true;
+	}
+
+	function _show() {
+		return $this->getListData();
+	}
+
+	function getUrl($redirect = false) {
+		$id = $redirect ? $this->getDuplicateId() : $this->id;
+		return Config::need('www_path') . '/releases/' . $id;
+	}
+
+	function getListData() {
+		$out = array(
+		    'id' => $this->id,
+		    'title' => $this->getTitle(),
+		    'anons' => $this->getAnons(),
+		    'path' => $this->getUrl(),
+		);
+		return $out;
+	}
+
+	function getTitle() {
+		$this->load();
+		return $this->data['title'];
+	}
+
+	function getAnons() {
+		$this->load();
+		return $this->data['anons'];
 	}
 
 }

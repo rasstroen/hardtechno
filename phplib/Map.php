@@ -4,11 +4,11 @@ class Map {
 
 	public static $map = array(
 	    '/' => 'main.xml',
-	    //features
-	    'features' => 'features/list.xml',
-	    'features/new' => 'features/new.xml',
-	    'features/%d' => 'features/show.xml',
-	    'features/%d/edit' => 'features/edit.xml',
+	    //news
+	    'news' => 'news/list.xml',
+	    'news/new' => 'news/new.xml',
+	    'news/%d' => 'news/show.xml',
+	    'news/%d/edit' => 'news/edit.xml',
 	    //groups
 	    'groups' => 'groups/list.xml',
 	    'groups/new' => 'groups/new.xml',
