@@ -91,8 +91,9 @@ class CommonModule extends BaseModule {
 		$cond = new Conditions();
 		if ($this->ConditionsEnabled) {
 			// пейджинг, сортировка
-			if ($sortings) {
+			if ($sortings || $default_sortings) {
 				$cond->setSorting($sortings, $default_sortings);
+				
 				$order = $cond->getSortingField();
 				$sorting_order = $cond->getSortingOrderSQL();
 			}

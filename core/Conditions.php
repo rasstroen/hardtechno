@@ -48,32 +48,45 @@ class Conditions {
 		return (($this->currentPage - 1) * $this->perPage);
 	}
 
-	function setSorting($options, $defaut = false) {
-		if ($defaut) {
-			foreach ($defaut as $fieldName => $data) {
+	function setSorting($options, $default = false) {
+		if ($default) {
+			foreach ($default as $fieldName => $data) {
 				$this->defaultSortingField = $fieldName;
 				if (isset($data['order'])) {
 					$this->defaultSortingOrder = $data['order'];
 				}
 			}
 		}
-		$other = ($this->getSortingOrder() == 'desc') ? 'asc' : 'desc';
+
+		$sf = $this->getSortingField();
+		$other = ($this->getSortingOrder() != 'desc') ? 'desc' : 'asc';
 		foreach ($options as $name => $option) {
-			$opt = $option;
-			if ($this->getSortingField() == $name) {
-				$opt['current'] = 1;
-				$opt['path'] = $this->preparePath(array(array('sort' => $name), array('order' => $other)));
-			} else {
-				$opt['path'] = $this->preparePath(array(array('sort' => $name), array('order' => 'asc')));
+			$this->sorting[$name] = $option;
+			if (!$this->defaultSortingField) {
+				$this->defaultSortingField = $name;
+				if (isset($option['order'])) {
+					$this->defaultSortingOrder = $option['order'];
+				}
 			}
-			$this->sorting[$name] = $opt;
+		}
+		$sf = $this->getSortingField();
+
+		if(is_array($this->sorting))
+		foreach ($this->sorting as $name => &$option) {
+			if ($sf == $name) {
+				$option['current'] = 1;
+				$option['path'] = $this->preparePath(array(array('sort' => $name), array('order' => $other)));
+			} else {
+				$option['path'] = $this->preparePath(array(array('sort' => $name), array('order' => 'asc')));
+			}
 		}
 	}
 
 	function getSortingField() {
 		$p = isset(Request::$get_normal['sort']) ? Request::$get_normal['sort'] : '';
-		if (!isset($this->sorting[$p]))
+		if (!$p || !isset($this->sorting[$p])) {
 			return $this->defaultSortingField;
+		}
 		return $p;
 	}
 

@@ -80,7 +80,6 @@ class BaseModule {
 		}
 	}
 
-
 	/**
 	 * перед тем как отдать данные из кеша выполняем эту ф-цию
 	 */
@@ -92,10 +91,21 @@ class BaseModule {
 		$this->cache_enabled = false;
 	}
 
+	/**
+	 * нужен ли кеш для хранения xml модуля?
+	 * 
+	 * @return boolean да или нет 
+	 */
 	protected function checkCacheSettings() {
-		if ((isset($this->settings['cache']) && $this->settings['cache']) || (isset($this->props['params']['cache']) && $this->props['params']['cache'] )) {
-			$this->xml_cache_name = Request::$pageName . '_' . $this->moduleName . '_' . (implode('', Request::getAllParameters()));
-			$this->cache_enabled = true;
+		if ((isset($this->params['cache']) && $this->params['cache'])) {
+			$this->xml_cache_name = Request::getModuleUniqueHash($this->moduleName, $this->action, $this->mode, $this->params);
+			if (Request::post('writemodule')) {
+				// erasing cache if any write actions
+				Cache::drop($this->xml_cache_name, Cache::DATA_TYPE_XML);
+				$this->cache_enabled = false;
+			}
+			else
+				$this->cache_enabled = true;
 		}
 		return $this->cache_enabled;
 	}
@@ -118,11 +128,9 @@ class BaseModule {
 	protected function getFromCache() {
 		if (!$this->cache_enabled)
 			return false;
-		if (isset($this->props['params']['cache_sec']))
-			$cache_sec = (int) $this->props['params']['cache_sec'];
-		if (isset($this->settings['cache_sec']))
-			$cache_sec = (int) $this->settings['cache_sec'];
-
+		$cache_sec = isset($this->params['cache']) ? max(0, (int) $this->params['cache']) : 0;
+		if (!$cache_sec)
+			return false;
 		if ($data = Cache::get($this->xml_cache_name, Cache::DATA_TYPE_XML, $cache_sec)) {
 			Log::timingplus($this->moduleName . ' : XML from cache');
 			$doc = new DOMDocument;
@@ -139,9 +147,9 @@ class BaseModule {
 	// отправляем ноду в кеш
 	protected function putInCache() {
 		if ($this->cache_enabled) {
-			if (isset($this->settings['cache_sec']))
-				$cache_sec = (int) $this->settings['cache_sec'];
-
+			$cache_sec = isset($this->params['cache']) ? max(0, (int) $this->params['cache']) : 0;
+			if (!$cache_sec)
+				return false;
 			Cache::set($this->xml_cache_name, XMLClass::$xml->saveXML($this->xmlPart), $cache_sec, Cache::DATA_TYPE_XML);
 			Log::logHtml('caching for module # ' . $this->moduleName . ' enabled [put into cache]');
 		}

@@ -24,8 +24,8 @@ class Cache {
 			return true;
 		$memcache_enabled = Config::need('xsl_cache_memcache_enabled', false);
 		$xcache_enabled = Config::need('xsl_cache_xcache_enabled', false);
-		$filecache_enabled = Config::need('xsl_cache_file_path', false);
-
+		$filecache_enabled = false;
+		
 		self::$min_cache_sec = Config::need('xml_cache_min_sec');
 		self::$max_cache_sec = Config::need('xml_cache_max_sec');
 
@@ -55,6 +55,7 @@ class Cache {
 
 	public static function drop($name, $datatype = self::DATA_TYPE_VAR) {
 		self::init();
+		if(!self::$cache_enabled) return null;
 		switch (self::$cacheType) {
 			case self::CACHE_TYPE_XCACHE:
 				self::drop_xcache($name, $datatype);
@@ -71,6 +72,7 @@ class Cache {
 
 	public static function get($name, $datatype = self::DATA_TYPE_VAR, $cache_sec = 0) {
 		self::init();
+		if(!self::$cache_enabled) return null;
 		Log::timingplus('cache:get');
 		switch (self::$cacheType) {
 			case self::CACHE_TYPE_XCACHE:
@@ -93,6 +95,7 @@ class Cache {
 
 	public static function set($name, $value, $cache_seconds = false, $datatype = self::DATA_TYPE_VAR) {
 		self::init();
+		if(!self::$cache_enabled) return null;
 		Log::timingplus('cache:set');
 		if (!$cache_seconds)
 			$cache_seconds = self::$max_cache_sec;
@@ -133,10 +136,12 @@ class Cache {
 	}
 
 	private static function drop_xcache($name, $datatype = self::DATA_TYPE_XML) {
+		global $current_user;
+		/* @var $current_user CurrentUser */
 		if ($datatype == self::DATA_TYPE_XSL)
 			$filename = 'xsl_' . self::$theme . '_' . self::$language . '_' . $name . '.xsl';
 		else if ($datatype == self::DATA_TYPE_XML)
-			$filename = 'xml_' . self::$theme . '_' . self::$language . '_' . $name;
+			$filename = 'xml_' . $current_user->getRole() . '|' . self::$theme . '|' . self::$language . '|' . $name;
 		else
 			$filename = 'var_' . $name;
 		@xcache_unset($filename);
@@ -166,14 +171,20 @@ class Cache {
 	}
 
 	private static function get_xcache($name, $datatype = self::DATA_TYPE_XML) {
+		global $current_user;
+		/* @var $current_user CurrentUser */
 		if ($datatype == self::DATA_TYPE_XSL)
 			$filename = 'xsl_' . self::$theme . '_' . self::$language . '_' . $name . '.xsl';
 		else if ($datatype == self::DATA_TYPE_XML)
-			$filename = 'xml_' . self::$theme . '_' . self::$language . '_' . $name;
+			$filename = 'xml_' . $current_user->getRole() . '|' . self::$theme . '|' . self::$language . '|' . $name;
 		else
 			$filename = 'var_' . $name;
 		$var = xcache_get($filename);
-		Log::logHtml($filename . ' got from xcache:' . $var);
+
+		if (!is_null($var))
+			Log::logHtml($filename . ' got from xcache');
+		else
+			Log::logHtml($filename . ' got from xcache: null');
 		return $var;
 	}
 
@@ -182,10 +193,12 @@ class Cache {
 	}
 
 	private static function set_xcache($name, $value, $datatype = self::DATA_TYPE_VAR, $cache_seconds) {
+		global $current_user;
+		/* @var $current_user CurrentUser */
 		if ($datatype == self::DATA_TYPE_XSL)
 			$filename = 'xsl_' . self::$theme . '_' . self::$language . '_' . $name . '.xsl';
 		else if ($datatype == self::DATA_TYPE_XML)
-			$filename = 'xml_' . self::$theme . '_' . self::$language . '_' . $name;
+			$filename = 'xml_' . $current_user->getRole() . '|' . self::$theme . '|' . self::$language . '|' . $name;
 		else
 			$filename = 'var_' . $name;
 		Log::logHtml($filename . ' put into xcache');

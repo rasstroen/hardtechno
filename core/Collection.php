@@ -6,19 +6,19 @@ class Collection {
 	public $tableName = 'SomeObjectTable';
 	public $itemName = 'some_object';
 	public $itemsName = 'some_objects';
-	public static $books_instance = false;
-	public static $features_instance = false;
-	public static $persons_instance = false;
+	//
+	public static $news_instance = false;
+	public static $releases_instance = false;
+	//
 	public $items = array();
 	public $from_cache = array();
-	public $cache_time = 0;
+	public $cache_time = 60;
 
 	protected static function getInstance() {
 		throw new Exception('Collection::getInstance must be overriden');
 	}
 
 	public function putInCache($id, $force = false) {
-    if(!$this->cache_time) return false;
 		if (isset($this->from_cache[$id]))
 			return false;
 		if (isset($this->items[$id])) {
@@ -53,7 +53,6 @@ class Collection {
 
 	public function dropCache($id) {
 		Cache::drop($this->itemName . '_' . $id);
-		unset($this->items[$id]);
 	}
 
 	public static function add($classExem) {
@@ -61,7 +60,7 @@ class Collection {
 	}
 
 	public function getById($id, $data = false) {
-		if (!is_numeric($id))
+		if (!is_numeric($id) || !$id)
 			throw new Exception($id . ' illegal item id');
 		if (!isset($this->items[(int) $id])) {
 			$tmp = new $this->className($id, $data);
@@ -98,6 +97,8 @@ class Collection {
 		$tofetch = array();
 		if (is_array($ids)) {
 			foreach ($ids as $id) {
+				if (!$id)
+					continue;
 				if (!isset($this->items[(int) $id])) {
 					if (!$this->getFromCache($id))
 						$tofetch[] = $id;
@@ -108,6 +109,8 @@ class Collection {
 				$data = Database::sql2array($query, 'id');
 			}
 			foreach ($ids as $id) {
+				if (!$id)
+					continue;
 				if (!isset($this->items[(int) $id])) {
 					if (isset($data[$id])) {
 						$tmp = new $this->className($id, $data[$id]);

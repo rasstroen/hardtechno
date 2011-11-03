@@ -29,6 +29,28 @@ class Request {
 		self::$pass[$f] = $v;
 	}
 
+	/**
+	 *
+	 * получаем имя переменной для сохранения в кеше xml дерева модуля
+	 * 
+	 * @param type $moduleName
+	 * @param type $moduleAction
+	 * @param type $moduleMode
+	 * @param type $params
+	 * 
+	 * @return string имя переменной 
+	 */
+	public static function getModuleUniqueHash($moduleName = '', $moduleAction = '', $moduleMode = '', $params = array()) {
+		$cacheName = $moduleName . '|' . $moduleAction . '|' . $moduleMode;
+		$cacheNameVar = '';
+		foreach (self::$get_normal as $f => $v)
+			$cacheNameVar.= $f . '=' . $v;
+		foreach ($params as $f => $v)
+			$cacheNameVar.= $f . '=' . $v;
+		$cacheNameVar = $cacheNameVar ? '|' . md5($cacheNameVar) : '';
+		return $cacheName . $cacheNameVar;
+	}
+
 	/** обрабатываем входные параметры скрипта, определяем запрашиваемую страницу
 	 *
 	 */
@@ -73,12 +95,16 @@ class Request {
 		unset($_GET);
 	}
 
+	public static function is_on_main_page() {
+		return(self::$structureFile === 'main.xml');
+	}
+
 	function getRealPath() {
 		$uri = explode('/', $_SERVER['REQUEST_URI']);
 		$i = self::$real_path;
 		while ($i-- > 1)
 			array_pop($uri);
-		return ($real = implode('/', $uri).'/') ? $real : Config::need('www_path');
+		return ($real = implode('/', $uri) . '/') ? $real : Config::need('www_path');
 	}
 
 	/** по маске проверяем параметры для модуля

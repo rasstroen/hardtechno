@@ -8,9 +8,11 @@
 		<javascript path="jquery.min" />
 		<javascript path="application" />
 		<layout file="layouts/page.xsl"/>
-		<role need="50"/>
+		<role need="0"/>
 	</data>
 	<blocks>
-		<header><module name="users" action="show" mode="auth"/></header>
+		<header>
+			<module name="users" action="show" mode="auth"/>
+		</header>
 	</blocks>
 </structure>
