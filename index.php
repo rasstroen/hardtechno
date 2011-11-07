@@ -37,6 +37,7 @@ function shutdown_handler() {
 	global $dev_mode, $errorString, $errorDescription, $errorCode;
 	$e = error_get_last();
 	if ($e['type'] == 1) {  // фатальная ошибка
+		try{
 		if ($dev_mode) {
 			$errorString = $e['message'];
 			$errorDescription = '[' . $e['file'] . ':' . $e['line'] . ']';
@@ -49,6 +50,9 @@ function shutdown_handler() {
 		$page = new PageConstructor('errors/p502.xml');
 		@ob_end_clean();
 		echo $page->process();
+		}catch(Exception $e){
+			die($e->getMessage().' in finalize');
+		}
 	}
 }
 
@@ -115,4 +119,3 @@ if ($dev_mode) {
 
 
 
-	

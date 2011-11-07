@@ -24,7 +24,7 @@ class User {
 	public $profile_xml = array();
 	public $xml_fields = array(
 	    'id',
-	    'nickname',
+	    'nick',
 	    'lastSave',
 	    'lastLogin',
 	);
@@ -34,7 +34,7 @@ class User {
 	function __construct($id = false, $data = false) {
 		$this->loaded = false;
 		if ($id && !is_numeric($id)) {
-			$query = 'SELECT `id` FROM `users` WHERE `nickname`=' . Database::escape($id);
+			$query = 'SELECT `id` FROM `users` WHERE `nick`=' . Database::escape($id);
 			$id = (int) Database::sql2single($query);
 		}
 		if ($id) {
@@ -73,6 +73,7 @@ class User {
 		return array(
 		    'id' => $this->id,
 		    'picture' => $this->getAvatar(),
+		    'nick' => $this->getNickName(),
 		    'nickname' => $this->getNickName(),
 		    'lastSave' => $this->profile['lastSave'],
 		    'path' => $this->getUrl(),
@@ -167,7 +168,7 @@ class User {
 
 	public function getNickName() {
 		$this->load();
-		return $this->getProperty('nickname');
+		return $this->getProperty('nick');
 	}
 
 	public function getAvatar() {
@@ -184,8 +185,8 @@ class User {
 		$hash = md5($email . $nickname . $password . time());
 		$query = 'INSERT INTO `users` SET
 			`email`=\'' . $email . '\',
-			`password`=\'' . md5($password) . '\',
-			`nickname`=\'' . $nickname . '\',
+			`pass`=\'' . md5($password) . '\',
+			`nick`=\'' . $nickname . '\',
 			`role`=\'' . User::ROLE_READER_CONFIRMED . '\',
 			`hash` = \'' . $hash . '\'';
 		if (Database::query($query)) {
@@ -207,6 +208,7 @@ class User {
 	public function getXMLInfo() {
 		$this->load();
 		$out = $this->profile_xml;
+		$out['nickname'] = $out['nick'];
 		return $out;
 	}
 

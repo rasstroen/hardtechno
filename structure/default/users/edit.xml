@@ -2,7 +2,7 @@
 <structure>
 	<data>
 		<layout file="layouts/page.xsl"/>
-		<role need="50"/>
+		<role need="10"/>
     <title>Редактирование профиля {profile-nickname:get:1}</title>
 	</data>
 	<blocks>

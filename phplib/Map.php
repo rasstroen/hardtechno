@@ -9,22 +9,40 @@ class Map {
 	    'news/new' => 'news/new.xml',
 	    'news/%d' => 'news/show.xml',
 	    'news/%d/edit' => 'news/edit.xml',
-	    //groups
-	    'groups' => 'groups/list.xml',
-	    'groups/new' => 'groups/new.xml',
-	    'groups/%d' => 'groups/show.xml',
-	    'groups/%d/edit' => 'groups/edit.xml',
+	    // releases
+	    'releases' => 'releases/list.xml',
+	    'releases/new' => 'releases/new.xml',
+	    'releases/%d' => 'releases/show.xml',
+	    'releases/%d/edit' => 'releases/edit.xml',
+	    // video
+	    'video' => 'video/list.xml',
+	    'video/new' => 'video/new.xml',
+	    'video/%d' => 'video/show.xml',
+	    'video/%d/edit' => 'video/edit.xml',
+	    // mixes
+	    'mix' => 'mix/list.xml',
+	    'mix/new' => 'mix/new.xml',
+	    'mix/%d' => 'mix/show.xml',
+	    'mix/%d/edit' => 'mix/edit.xml',
+	    // blog
+	    'blog' => 'blog/list.xml',
+	    'blog/new' => 'blog/new.xml',
+	    'blog/%d' => 'blog/show.xml',
+	    'blog/%d/edit' => 'blog/edit.xml',
 	    // other
 	    'register' => 'register/index.xml',
 	    'emailconfirm/%d/%s' => 'misc/email_confirm.xml',
 	    404 => 'errors/p404.xml',
 	    502 => 'errors/p502.xml',
+	    // users
 	    'user/%s' => 'users/user.xml',
 	    'user/%s/edit' => 'users/edit.xml',
 	);
 	public static $sinonim = array(
 	    'user/%d' => 'user/%s',
 	    'user/%d/edit' => 'user/%s/edit',
+	    'profile/%d' => 'user/%s',
+	    'profile/%d/edit' => 'user/%s/edit',
 	);
 
 }

@@ -8,7 +8,7 @@ class CurrentUser extends User {
 	    'id',
 	    'email',
 	    'role',
-	    'nickname',
+	    'nick',
 	    'lastSave',
 	);
 	public $authorized = false;
@@ -66,9 +66,9 @@ class CurrentUser extends User {
 
 	public function getAvailableNickname($nickname, $additional = '') {
 		$nickname = trim($nickname) . $additional;
-		$query = 'SELECT `nickname` FROM `users` WHERE `nickname` LIKE \'' . $nickname . '\' LIMIT 1';
+		$query = 'SELECT `nick` FROM `users` WHERE `nick` LIKE \'' . $nickname . '\' LIMIT 1';
 		$row = Database::sql2single($query);
-		if ($row && $row['nickname']) {
+		if ($row && $row['nick']) {
 			return $this->getAvailableNickname($nickname, $additional . rand(1, 99));
 		}
 		return $nickname;
@@ -88,6 +88,7 @@ class CurrentUser extends User {
 	public function authorize_cookie() {
 		$auth_cookie_name = Config::need('auth_cookie_hash_name');
 		$auth_uid_name = Config::need('auth_cookie_id_name');
+		$_COOKIE[$auth_uid_name] = isset($_COOKIE[$auth_uid_name]) ? $_COOKIE[$auth_uid_name] : '';
 		$xcache_cookie = 'auth_' . (int) $_COOKIE[$auth_uid_name];
 		$to_cache = true;
 		if (isset($_COOKIE[$auth_cookie_name]) && isset($_COOKIE[$auth_uid_name])) {
@@ -115,15 +116,15 @@ class CurrentUser extends User {
 	public function authorize_password($email, $password, $md5used = false) {
 		$row = Database::sql2row('SELECT * FROM `users` WHERE 
 			(`email`=\'' . $email . '\' OR 
-			`nickname`=\'' . $email . '\')');
+			`nick`=\'' . $email . '\')');
 		if (!$row) {
 			// нет такого пользователя
 			return 'user_missed';
 		}
 
-		$password = $md5used ? $password : md5($password);
+		$password_ = $md5used ? $password : md5($password);
 		if ($row) {
-			if ($password != $row['password']) {
+			if ($password_ != $row['pass'] && ($password != $row['pass'])) {
 				return 'user_password';
 			}
 		}

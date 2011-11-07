@@ -4,10 +4,10 @@ class Users {
 
 	public static $rolenames = array(
 	    User::ROLE_ANON => 'Аноним',
-	    User::ROLE_READER_UNCONFIRMED => 'Неподтвержденный читатель',
+	    User::ROLE_READER_UNCONFIRMED => 'Неподтвержденный пользователь',
 	    User::ROLE_VANDAL => 'Вандал',
-	    User::ROLE_READER_CONFIRMED => 'Читатель',
-	    User::ROLE_BIBER => 'Библиотекарь',
+	    User::ROLE_READER_CONFIRMED => 'Пользователь',
+	    User::ROLE_BIBER => 'Модератор',
 	    User::ROLE_SITE_ADMIN => 'Администратор сайта',
 	);
 	private static $users = array();
