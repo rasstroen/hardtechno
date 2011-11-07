@@ -7,6 +7,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />	
 		<title>
 			<xsl:value-of select="@title"></xsl:value-of>
+			<xsl:text> — hardtechno.ru</xsl:text>
 		</title>
 		<script>
 			<xsl:text>var exec_url = '</xsl:text>

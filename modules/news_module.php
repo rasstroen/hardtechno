@@ -18,6 +18,9 @@ class news_module extends CommonModule {
 						break;
 				}
 				break;
+			case 'new':
+				$this->_new();
+				break;
 			default:
 				throw new Exception('no action #' . $action . ' news_module');
 				break;
