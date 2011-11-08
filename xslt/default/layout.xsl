@@ -27,11 +27,18 @@
 			<div class="l-header">
 				<xsl:apply-templates select="&root;" mode="l-header" />
 			</div>
+			<div class="l-clear" />
 			<div class="l-wrapper">
 				<div class="l-content">
+					
 					<xsl:apply-templates select="&structure;/blocks/content/module" mode="l-content"/>
+					
 				</div>
+				<div class="l-sidebar">
+						<xsl:apply-templates select="&structure;/blocks/sidebar/module" mode="l-sidebar"/>rrr
+					</div>
 			</div>
+			<div class="l-clear" />
 			<div class="l-footer">
 				
 			</div>

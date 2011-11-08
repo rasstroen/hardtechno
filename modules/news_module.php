@@ -21,6 +21,9 @@ class news_module extends CommonModule {
 			case 'new':
 				$this->_new();
 				break;
+			case 'show':
+				$this->_show($this->params['newsitem_id']);
+				break;
 			default:
 				throw new Exception('no action #' . $action . ' news_module');
 				break;

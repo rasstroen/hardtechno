@@ -9,6 +9,24 @@
 	</xsl:template>
 	<!-- news form -->
 	
+	<!-- news item -->
+	<xsl:template match="module[@name='news' and @action='show']" mode="p-module">
+		<xsl:apply-templates select="newsitem " mode="p-news-show-item"/>
+	</xsl:template>
+	<!-- news item -->
+	<xsl:template match="*" mode="p-news-show-item">
+		<div class="news_item_inner">
+			<h2>
+				<xsl:value-of select="@title" />
+			</h2>
+			<div class="date">
+				<xsl:value-of select="@date" />
+			</div>
+			<div class="content">
+				<xsl:value-of select="@html" disable-output-escaping="yes" />
+			</div>
+		</div>
+	</xsl:template>
 	
 	<!-- LISTS -->
 	<!-- news list with 2 columnss -->
@@ -31,7 +49,6 @@
 				<xsl:with-param name="pos" select="$pos+2"/>
 			</xsl:apply-templates>
 		</xsl:if>
-		
 	</xsl:template>
 	<!-- one tr for column-->
 	<xsl:template match="*" mode="p-news-list-columns-tr">

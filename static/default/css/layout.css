@@ -1,5 +1,8 @@
 /* Layout */
-.l-wrapper, .l-header, .l-footer {width:100%; margin:0 auto}
+.l-body{margin:0 auto;}
+.l-wrapper, .l-header, .l-footer {min-width:1000px; max-width:1700px; width:100%; margin:0 auto; overflow:hidden;}
+.l-header{clear:both;}
+.l-clear{clear:both;height:1px;width:1px;overflow:hidden;}
 .l-header-module {float:right; padding:5px; margin-bottom:5px}
 .l-header-logo {float:left; overflow:hidden; margin-right:15px; margin-bottom:10px}
 .l-header-search {float:left}
@@ -7,10 +10,10 @@
 .l-header-nav ul {float:left; list-style:none}
 .l-header-nav ul li {float:left; list-style:none; margin-right:5px}
 
-.l-content {margin:0 auto;float:left; width:100%; min-width:600px; max-width:1000px;}
+.l-content {float:left;width:70%;min-width:720px; max-width:1600px; overflow:hidden}
 .l-sidebar .module,
-.l-content .module { overflow:hidden; margin-bottom:2em; clear:both}
-.l-sidebar {float:right; width:280px; padding:10px}
+.l-content .module {overflow:hidden; margin:0 auto;}
+.l-sidebar {float:right; width:28%;width:280px;min-width:280px;max-width:280px;}
 
 .l-footer-nav ul li {float:left; list-style:none;}
 
