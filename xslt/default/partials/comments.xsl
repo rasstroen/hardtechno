@@ -61,9 +61,9 @@
 						<a title="Ответ на" href="#comment_{$item/@parent}">↑</a>
 					</div>
 				</xsl:if>
-				<div style="clear:all;height:1px;font-size:0px;"></div>
+				<div class="clear"></div>
 			</div>
-			<div style="clear:both;height:1px;font-size:0px;"></div>
+			<div class="clear"></div>
 			<xsl:apply-templates select="item" mode="p-comments-list">
 				<xsl:with-param name="level" select="$level + 1" />	
 				<xsl:with-param name="module" select="$module" />	
