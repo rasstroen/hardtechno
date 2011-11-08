@@ -30,7 +30,7 @@ class User {
 	);
 	public $lovedLoaded = false;
 	public $loved;
-	
+
 	function __construct($id = false, $data = false) {
 		$this->loaded = false;
 		if ($id && !is_numeric($id)) {
@@ -173,7 +173,7 @@ class User {
 
 	public function getAvatar() {
 		$this->load();
-		$pic = $this->getProperty('avatar') ? $this->id . '.jpg' : 'default.jpg';
+		$pic = $this->getProperty('avatar') ? ($this->id . '.' . $this->getProperty('avatar')) : 'default.jpg';
 		return Config::need('www_path') . '/static/upload/avatars/' . $pic;
 	}
 
