@@ -1,5 +1,5 @@
 /* Layout */
-.l-wrapper, .l-header, .l-footer {width:100%; margin:2em auto 4em;}
+.l-wrapper, .l-header, .l-footer {width:100%; margin:0 auto}
 .l-header-module {float:right; padding:5px; margin-bottom:5px}
 .l-header-logo {float:left; overflow:hidden; margin-right:15px; margin-bottom:10px}
 .l-header-search {float:left}
@@ -7,12 +7,12 @@
 .l-header-nav ul {float:left; list-style:none}
 .l-header-nav ul li {float:left; list-style:none; margin-right:5px}
 
-.l-content {margin:0 auto;float:left; width:100%;min-width:700px; max-width:1000px; padding-right:20px}
+.l-content {margin:0 auto;float:left; width:100%; min-width:600px; max-width:1000px;}
 .l-sidebar .module,
 .l-content .module { overflow:hidden; margin-bottom:2em; clear:both}
 .l-sidebar {float:right; width:280px; padding:10px}
 
-.l-footer-nav ul li {float:left; list-style:none; margin-right:5px}
+.l-footer-nav ul li {float:left; list-style:none;}
 
 /* Colors */
 a {color:#000;text-decoration:none;}

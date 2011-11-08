@@ -2,15 +2,15 @@
 <structure>
 	<data>
 		<title>Новости</title>
-		<stylesheet path="partials/feature"/>
+		<stylesheet path="partials/news"/>
 		<javascript path="jquery.timeago" />
-		<javascript path="partials/feature"/>
+		<javascript path="partials/news"/>
 
 	</data>
 	<blocks>
 		<content>
 			<module name="news" action="list" mode="columns">
-				<param name="per_page" type="var" value="10"/>
+				<param name="per_page" type="var" value="12"/>
 				<param name="paging_parameter_name" type="var" value="p" />
 			</module>
 		</content>

@@ -2,10 +2,8 @@
 <structure>
 	<data>
 		<layout file="layouts/page.xsl"/>
-		<stylesheet path="partials/book"/>
-		<stylesheet path="partials/author"/>
-		<stylesheet path="partials/event"/>
-		<stylesheet path="partials/genre"/>
+		<stylesheet path="partials/news"/>
+
 		<title>Первый HARDTECHNO портал</title>
 		<role need="0"/>
 	</data>
