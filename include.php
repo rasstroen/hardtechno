@@ -13,6 +13,7 @@ $includePathes = array(
     $root . 'classes/User',
     $root . 'classes/News',
     $root . 'classes/Releases',
+    $root . 'classes/Banners',
     $root . 'classes',
     $root . 'functions',
     $root . 'phplib',

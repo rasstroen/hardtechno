@@ -78,7 +78,7 @@
 					<div class="title">
 						<h2>
 							<a href="{@path}">
-								<xsl:value-of select="@date"/>
+								<xsl:value-of select="@title"/>
 							</a>
 						</h2>
 					</div>

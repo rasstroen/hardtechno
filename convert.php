@@ -1,3 +1,4 @@
+<pre>
 <?php
 
 /*
@@ -18,7 +19,7 @@ include 'include.php';
 
 // news
 Database::query('TRUNCATE `news`');
-$query = 'SELECT * FROM `module_news` WHERE `type`=0';
+$query = 'SELECT * FROM `fashist`.`module_news` WHERE `type`=0';
 $news = Database::sql2array($query, 'id');
 foreach ($news as $id => $newsitem) {
 	$object = News::getInstance()->getById($id);
@@ -30,7 +31,7 @@ foreach ($news as $id => $newsitem) {
 
 // releases
 Database::query('TRUNCATE `releases`');
-$query = 'SELECT * FROM `module_news` WHERE `type`=1';
+$query = 'SELECT * FROM `fashist`.`module_news` WHERE `type`=1';
 $news = Database::sql2array($query, 'id');
 foreach ($news as $id => $newsitem) {
 	$object = Releases::getInstance()->getById($id);
@@ -39,3 +40,13 @@ foreach ($news as $id => $newsitem) {
 	$data['update_time'] = strtotime($data['update_time']);
 	$object->_create($data);
 }
+
+//comments
+Database::query('TRUNCATE `comments`');
+Database::query('INSERT INTO `comments` (SELECT * FROM `fashist`.`comments`)');
+
+exec('rm -rf  /home/test.hardtechno.ru/static/upload/avatars/*',$o);
+print_r($o);
+exec('cp  /home/hardtechno.ru/upload/avatar/* /home/test.hardtechno.ru/static/upload/avatars/',$o);
+print_r($o);
+die('all');

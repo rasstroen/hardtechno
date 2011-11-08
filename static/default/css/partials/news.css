@@ -4,7 +4,7 @@
 	width : 280px;
 	height : 300px;
 	float: left;
-	padding:5px;
+	padding:10px 0px 10px 3px;
 }
 
 .news_item:hover{
@@ -44,8 +44,8 @@
 	left:10px;
 }
 
-.news_item .plank .title{
-
+.news_item .plank .title h2 a{
+	font-size:13px;
 }
 
 .news_item .plank .date{
@@ -53,7 +53,7 @@
 }
 
 .news_item .plank .anons{
-	margin-left:10px;
+	
 	width: 270px;
 	height: 96px;
 	overflow: hidden;
@@ -71,3 +71,9 @@
 	color:#777;
 
 }
+
+.news_item_inner{
+	float:right;
+	margin: 0px 20px 0px 0px;
+}
+

@@ -12,7 +12,9 @@
 	<xsl:include href="../module.xsl"/>
 	<xsl:include href="../helpers.xsl" />
 	<xsl:include href="../partials/user.xsl"/>
+	<xsl:include href="../partials/comments.xsl"/>
 	<xsl:include href="../partials/news.xsl"/>
+	<xsl:include href="../partials/banners.xsl"/>
 	<xsl:include href="../partials/releases.xsl"/>
 	<xsl:include href="../partials/misc.xsl"/>
 </xsl:stylesheet>

@@ -24,6 +24,9 @@
 			<xsl:apply-templates select="&page;" mode="l-head" />
 		</head>
 		<body class="l-body">
+			<div class="l-logo">
+				<xsl:apply-templates select="&root;" mode="l-logo" />
+			</div>
 			<div class="l-header">
 				<xsl:apply-templates select="&root;" mode="l-header" />
 			</div>
@@ -35,7 +38,7 @@
 					
 				</div>
 				<div class="l-sidebar">
-						<xsl:apply-templates select="&structure;/blocks/sidebar/module" mode="l-sidebar"/>rrr
+						<xsl:apply-templates select="&structure;/blocks/sidebar/module" mode="l-sidebar"/>
 					</div>
 			</div>
 			<div class="l-clear" />
@@ -55,6 +58,10 @@
 	</xsl:template>
 
 	<xsl:template match="*" mode="l-content">
+		<xsl:apply-templates select="." mode="modules"/>
+	</xsl:template>
+	
+	<xsl:template match="*" mode="l-sidebar">
 		<xsl:apply-templates select="." mode="modules"/>
 	</xsl:template>
 

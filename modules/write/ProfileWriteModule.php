@@ -60,9 +60,11 @@ class ProfileWriteModule extends BaseWriteModule {
 			//avatar
 			if (isset($_FILES['picture']) && $_FILES['picture']['tmp_name']) {
 				$filename = Config::need('avatar_upload_path') . '/' . $editing_user->id . '.jpg';
+				$upload = new UploadAvatar($_FILES['picture']['tmp_name'], 50, 50, "simple", $filename);
+				$filename = Config::need('avatar_upload_path') . '/big_' . $editing_user->id . '.jpg';
 				$upload = new UploadAvatar($_FILES['picture']['tmp_name'], 100, 100, "simple", $filename);
 				if ($upload->out)
-					$editing_user->setProperty('picture', 1);
+					$editing_user->setProperty('picture', $this->id . '.jpg');
 				else {
 					throw new Exception('cant copy file to ' . $filename, 100);
 				}

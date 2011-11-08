@@ -3,7 +3,6 @@
 	<data>
 		<title>Новости</title>
 		<stylesheet path="partials/news"/>
-		<javascript path="jquery.timeago" />
 		<javascript path="partials/news"/>
 
 	</data>
