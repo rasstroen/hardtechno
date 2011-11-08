@@ -1,5 +1,5 @@
 /* Layout */
-.l-wrapper, .l-header, .l-footer {width:960px; margin:2em auto 4em; clear:both; overflow:hidden}
+.l-wrapper, .l-header, .l-footer {width:100%; margin:2em auto 4em;}
 .l-header-module {float:right; padding:5px; margin-bottom:5px}
 .l-header-logo {float:left; overflow:hidden; margin-right:15px; margin-bottom:10px}
 .l-header-search {float:left}
@@ -7,15 +7,15 @@
 .l-header-nav ul {float:left; list-style:none}
 .l-header-nav ul li {float:left; list-style:none; margin-right:5px}
 
-.l-content {float:left; width:800px; padding-right:20px}
+.l-content {margin:0 auto;float:left; width:100%;min-width:700px; max-width:1000px; padding-right:20px}
 .l-sidebar .module,
-.l-content .module {overflow:hidden; margin-bottom:2em; clear:both}
-.l-sidebar {float:right; width:300px; padding:10px}
+.l-content .module { overflow:hidden; margin-bottom:2em; clear:both}
+.l-sidebar {float:right; width:280px; padding:10px}
 
 .l-footer-nav ul li {float:left; list-style:none; margin-right:5px}
 
 /* Colors */
-a {color:#06a}
+a {color:#000;text-decoration:none;}
 .l-sidebar {background:#f0f0f0}
 .l-header-nav ul p a {color:black}
 .l-header-module {background:#f0f0f0}
@@ -30,8 +30,8 @@ a {color:#06a}
 
 /* Misc */
 .l-header-logo a {
-  background: url('/static/default/img/logo.png') no-repeat scroll 0 0 transparent;
-  float:left; height:58px; overflow:hidden; text-indent:9999px; width:340px;
+	background: url('/static/default/img/logo.png') no-repeat scroll 0 0 transparent;
+	float:left; height:58px; overflow:hidden; text-indent:9999px; width:340px;
 }
 .l-content .module .form-group {margin-bottom:1em}
 .l-content .module .form-field {margin-bottom:.5em; overflow:hidden}

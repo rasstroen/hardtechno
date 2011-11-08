@@ -3,7 +3,7 @@
 class releases_module extends CommonModule {
 
 	function setCollectionClass() {
-		$this->Collection = News::getInstance();
+		$this->Collection = Releases::getInstance();
 	}
 
 	function _process($action, $mode) {
@@ -16,7 +16,7 @@ class releases_module extends CommonModule {
 				}
 				break;
 			default:
-				throw new Exception('no action #' . $action . ' news_module');
+				throw new Exception('no action #' . $action . ' releases_module');
 				break;
 		}
 	}

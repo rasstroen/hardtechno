@@ -13,9 +13,7 @@
 	<!-- LISTS -->
 	<!-- news list with 2 columnss -->
 	<xsl:template match="module[@name='news' and @action='list' and @mode='columns']" mode="p-module">
-		<table cellpadding="0" cellspacing="0" border="1">
-			<xsl:apply-templates select="news" mode="p-news-list-columns"/>
-		</table>
+		<xsl:apply-templates select="news" mode="p-news-list-columns"/>
 	</xsl:template>
 	<!-- news list with 1 columnss -->
 	<xsl:template match="module[@name='news' and @action='list' and not(@mode)]" mode="p-module">
@@ -39,45 +37,41 @@
 	<xsl:template match="*" mode="p-news-list-columns-tr">
 		<xsl:param name="item1"/>
 		<xsl:param name="item2"/>
-		<tr>
-			<td width="50%">
-				<xsl:apply-templates select="$item1" mode="p-news-item"/>
-			</td>
-			<td width="50%">
-				<xsl:apply-templates select="$item2" mode="p-news-item"/>
-			</td>
-		</tr>
+		<div class="news_item_left">
+			<xsl:apply-templates select="$item1" mode="p-news-item"/>
+		</div>
+		<div class="news_item_right">
+			<xsl:apply-templates select="$item2" mode="p-news-item"/>
+		</div>
 	</xsl:template>
 	<!-- news item -->
 	<xsl:template match="*" mode="p-news-item">
 		<div>
-			<div class="right_news">
-				<div class="newssubblock">
+			<div class="news_item">
+				<div class="img">
 					<a href="{@path}" title="{@title}" onfocus="this.blur()">
 						<img border="0" alt="{@title}" src="{@image}" />
-						<span class="comcount">
+						<span class="comment_count">
 							<xsl:value-of select="@comment_count" />
 							<xsl:text>&nbsp;комментариев&nbsp;</xsl:text>
 						</span>
 					</a>
 				</div>
-				<div class="newsrightblock">
-					<div class="newstitle">
+				<div class="plank">
+					<div class="title">
 						<h2>
 							<a href="{@path}">
 								<xsl:value-of select="@date"/>
 							</a>
 						</h2>
 					</div>
-					<div class="newsdate">
+					<div class="date">
 						<xsl:value-of select="@date"/>
 					</div>
-					<div class="newsshorttext_main">
+					<div class="anons">
 						<xsl:value-of select="@anons" disable-output-escaping="yes"/>
 					</div>
 				</div>
-				<br clear="all" />
-				<br />
 			</div>
 		</div>
 	</xsl:template>

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <structure>
 	<data>
-		<title>Новости</title>
+		<title>Релизы</title>
 		<stylesheet path="partials/feature"/>
 		<javascript path="jquery.timeago" />
 		<javascript path="partials/feature"/>
-
 	</data>
 	<blocks>
 		<content>
-			<module name="news" action="list" mode="columns">
-				<param name="per_page" type="var" value="10"/>
+			<module name="releases" action="list" mode="columns">
+				<param name="per_page" type="var" value="20"/>
 				<param name="paging_parameter_name" type="var" value="p" />
 			</module>
 		</content>

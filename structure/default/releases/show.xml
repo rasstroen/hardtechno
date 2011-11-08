@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<structure>
+	<data>
+		<title>Просмотр теста</title>
+		<role need="0"/>
+	</data>
+	<blocks>
+		<content>
+			<module name="news" action="show" >
+				<param name="newsitem_id" type="get" value="1" />
+			</module>
+		</content>
+	</blocks>
+</structure>

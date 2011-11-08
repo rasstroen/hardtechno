@@ -65,13 +65,25 @@ class Release extends BaseObjectClass {
 		$id = $redirect ? $this->getDuplicateId() : $this->id;
 		return Config::need('www_path') . '/releases/' . $id;
 	}
+	
+	 function getImage() {
+                $this->load();
+                return Config::need('www_path') . '/upload/news/small_' . $this->data['image'];
+        }
+
+        function getCommentCount() {
+                $this->load();
+                return $this->data['comment_count'];
+        }
 
 	function getListData() {
 		$out = array(
-		    'id' => $this->id,
-		    'title' => $this->getTitle(),
-		    'anons' => $this->getAnons(),
-		    'path' => $this->getUrl(),
+		   'id' => $this->id,
+                    'title' => $this->getTitle(),
+                    'anons' => $this->getAnons(),
+                    'path' => $this->getUrl(),
+                    'comment_count' => $this->getCommentCount(),
+                    'image' => $this->getImage(),
 		);
 		return $out;
 	}

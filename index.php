@@ -1,35 +1,10 @@
 <?php
 
+$dev_mode = true;
+$project_name = 'hardtechno';
 ini_set('upload_max_filesize', '15M');
 ini_set('date.timezone', 'Europe/Moscow');
-
 ini_set('mbstring.substitute_character', "none");
-$dev_mode = true;
-$auth = false; // if only developers can view site
-if ($auth) { // only for developers
-	$user = 'admin';
-	$pws = 'lsd';
-	$cook = md5('lsdadmin');
-	if ($_SERVER['PHP_AUTH_USER'] == $user) {
-		if ($_SERVER['PHP_AUTH_PW'] == $pws) {
-			setcookie('AU', $cook, time() + 2 * 3600);
-			$_COOKIE['AU'] = $cook;
-		}
-	}
-	if (!isset($_COOKIE['AU']) || $_COOKIE['AU'] != $cook) {
-		header('WWW-Authenticate: Basic realm="email/password"');
-		header('HTTP/1.0 401 Unauthorized');
-		exit;
-	} else {
-		if (($_SERVER['PHP_AUTH_USER'] !== "admin") || ($_SERVER['PHP_AUTH_PW'] !== $pws)) {
-			Header("WWW-Authenticate: Basic realm=\"email/password\"");
-			Header("HTTP/1.0 401 Unauthorized");
-			exit;
-		}
-	}
-}
-
-$project_name = 'grappling_hook';
 ini_set('display_errors', $dev_mode ? 1 : 0);
 error_reporting(E_ALL);
 
@@ -37,21 +12,21 @@ function shutdown_handler() {
 	global $dev_mode, $errorString, $errorDescription, $errorCode;
 	$e = error_get_last();
 	if ($e['type'] == 1) {  // фатальная ошибка
-		try{
-		if ($dev_mode) {
-			$errorString = $e['message'];
-			$errorDescription = '[' . $e['file'] . ':' . $e['line'] . ']';
-		} else {
-			$errorDescription = '';
-			$errorString = $e['message'];
-		}
-		$errorCode = 0;
-		XMLClass::reinitialize();
-		$page = new PageConstructor('errors/p502.xml');
-		@ob_end_clean();
-		echo $page->process();
-		}catch(Exception $e){
-			die($e->getMessage().' in finalize');
+		try {
+			if ($dev_mode) {
+				$errorString = $e['message'];
+				$errorDescription = '[' . $e['file'] . ':' . $e['line'] . ']';
+			} else {
+				$errorDescription = '';
+				$errorString = $e['message'];
+			}
+			$errorCode = 0;
+			XMLClass::reinitialize();
+			$page = new PageConstructor('errors/p502.xml');
+			@ob_end_clean();
+			echo $page->process();
+		} catch (Exception $e) {
+			die($e->getMessage() . ' in finalize');
 		}
 	}
 }
