@@ -5,9 +5,45 @@
 	<!-- NEW -->
 	<!-- news new -->
 	<xsl:template match="module[@name='news' and @action='new']" mode="p-module">
-		<xsl:apply-templates select="." mode="p-news-new" />
+		<xsl:apply-templates select="." mode="p-news-form" />
+	</xsl:template>
+	<!-- news edit -->
+	<xsl:template match="module[@name='news' and @action='edit']" mode="p-module">
+		<xsl:apply-templates select="newsitem" mode="p-news-form" />
 	</xsl:template>
 	<!-- news form -->
+	<xsl:template match="*" mode="p-news-form">
+		<form method="post" action="">
+			<input type="hidden" name="writemodule" value="NewsWriteModule" />
+			<input type="hidden" name="id" value="{@id}" />
+			<div class="form-group">
+				<h2>Добавление новости</h2>
+				<div class="form-field">
+					<label>Заголовок</label>
+					<input name="title" value="{@title}" />
+				</div>
+				<div class="form-field description">
+					<label>Анонс</label>
+					<textarea name="anons">
+						<xsl:value-of select="@anons"/>
+					</textarea>
+				</div>
+				<div class="form-field description">
+					<label>Текст файла</label>
+					<textarea id="html" name="html">
+						<xsl:value-of select="@html"/>
+					</textarea>
+				</div>
+				<div class="form-field">
+					<label>Путь до файла (относительно папки features/)</label>
+					<input name="filepath" value="{@filepath}"/>
+				</div>
+			</div>
+			<div class="form-control">
+				<input type="submit" value="Сохранить информацию"/>
+			</div>
+		</form>
+	</xsl:template>
 	
 	<!-- news item -->
 	<xsl:template match="module[@name='news' and @action='show']" mode="p-module">

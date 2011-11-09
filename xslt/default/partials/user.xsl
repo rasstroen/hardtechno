@@ -31,62 +31,58 @@
 					<a href="{$profile/@path_message}">Написать сообщение</a>
 				</xsl:if>
 			</p>
-
-			<!--xsl:choose>
-				<xsl:when test="$profile/@id = &current_profile;/@id">
-					<p>
-						<a href="{&prefix;}me/wall">Стена</a>
-					</p>
-				</xsl:when>
-				<xsl:otherwise>
-					<p>
-						<a href="{&prefix;}user/{$profile/@id}/wall">Стена</a>
-					</p>
-				</xsl:otherwise>
-			</xsl:choose-->
-
-			<p>
-				<xsl:text>Живет в городе</xsl:text>
-				<b>
-					<xsl:value-of select="$profile/@city" disable-output-escaping="yes"/>
-				</b>
-			</p>
+			<xsl:if test="$profile/@city != ''">
+				<p>
+					<xsl:text>Живет в городе</xsl:text>
+					<b>
+						<xsl:value-of select="$profile/@city" disable-output-escaping="yes"/>
+					</b>
+				</p>
+			</xsl:if>
 			<p>
 				<xsl:text>День рождения </xsl:text>
 				<b>
 					<xsl:value-of select="$profile/@bdays" disable-output-escaping="yes"/>
 				</b>
 			</p>
-			<xsl:if test="$profile/@about != ''">
-				<p>
-					<xsl:text>Пара слов о себе:</xsl:text>
-					<b>
-						<xsl:value-of select="$profile/@about" disable-output-escaping="yes"/>
-					</b>
-				</p>
-			</xsl:if>
-			<xsl:if test="$profile/@quote != ''">
-				<p>
-					<xsl:text>Любимые цитаты:</xsl:text>
-					<b>
-						<xsl:value-of select="$profile/@quote" disable-output-escaping="yes"/>
-					</b>
-				</p>
-			</xsl:if>
-
-			<xsl:if test="&role; > 39">
-				<a href="{&page;/@current_url}log">Изменения, сделанные пользователем</a>
-
-				<div class="p-user-show-text-vandal">
-					<a class="make-vandal" href="#">Сделать
-						<xsl:choose>
-							<xsl:when test="$profile/@role='20'">читателем</xsl:when>
-							<xsl:otherwise>вандалом</xsl:otherwise>
-						</xsl:choose>
-					</a>
+			<xsl:if test="&role; > 49">
+				<div class="user_admin_links">Администрирование
+					<table width="100%">
+						<tr>
+							<td><em>Контент</em></td>	
+							<td><em>Управление пользователями</em></td>
+							<td><em>Управление сайтом</em></td>
+						</tr>
+						<tr>
+							<td>
+				
+								<div>
+									<a href="{&prefix;}news/new">Добавить новость</a>
+								</div>
+								<div>
+									<a href="{&prefix;}releases/new">Добавить релиз</a>
+								</div>
+								<div>
+									<a href="{&prefix;}video/new">Добавить видео</a>
+								</div>
+								<div>
+									<a href="{&prefix;}mix/new">Добавить микс</a>
+								</div>
+							</td>
+							<td>
+								<div>
+									<a href="{&prefix;}mix/new">Список пользователей</a>
+								</div>
+							</td>	
+							<td>
+								<div>
+									<a href="{&prefix;}mix/new">Управление баннерами</a>
+								</div>
+							</td>
+						</tr>
+					</table>
 				</div>
 			</xsl:if>
-
 			<div id="friending" style="display:none"/>
 			<script>
 				<xsl:text>profileModule_checkFriend(</xsl:text>

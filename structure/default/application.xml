@@ -8,9 +8,9 @@
 		<stylesheet path="partials/user"/>
 		<javascript path="jquery.min" />
 		<javascript path="application" />
-		<layout file="layouts/page.xsl"/>
 		<javascript path="jquery.timeago" />
 		<javascript path="swfobject" />
+		<layout file="layouts/page.xsl"/>
 		<role need="0"/>
 	</data>
 	<blocks>

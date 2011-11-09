@@ -8,3 +8,7 @@
 .p-user-auth-image {float:left; margin-right:5px}
 .p-user-auth-image img {max-width:15px; max-height:15px}
 .p-user-auth input {display:block; margin-bottom:.2em}
+
+
+.user_admin_links{background: #C2CBE0;padding:10px; font-size: 14px;}
+.user_admin_links a{font-size: 12px}
