@@ -11,10 +11,10 @@
 .l-header-nav ul {float:left; list-style:none}
 .l-header-nav ul li {float:left; list-style:none; margin-right:5px}
 
-.l-content {float:left;width:72%;min-width:710px; max-width:1180px; overflow:hidden}
+.l-content {float:left;width:73%;min-width:710px; max-width:1180px; overflow:hidden}
 .l-sidebar .module,
 .l-content .module {overflow:hidden; margin:10px}
-.l-sidebar {float:right; width:28%;width:250px;min-width:250px;max-width:250px;margin:0px 10px 0px -10px;}
+.l-sidebar {float:right; width:25%;width:250px;min-width:250px;max-width:250px;margin:0px 0px 0px 0px;}
 
 .l-footer-nav ul li {float:left; list-style:none;}
 
