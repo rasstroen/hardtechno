@@ -9,15 +9,20 @@
 	</xsl:template>
 	<!-- news edit -->
 	<xsl:template match="module[@name='news' and @action='edit']" mode="p-module">
-		<xsl:apply-templates select="newsitem" mode="p-news-form" />
+		<xsl:apply-templates select="newsitem" mode="p-news-form" >
+			<xsl:with-param name="h2" select="'Редактирование новости'" />
+		</xsl:apply-templates>
 	</xsl:template>
 	<!-- news form -->
 	<xsl:template match="*" mode="p-news-form">
+		<xsl:param name="h2" select="'Добавление новости'" />
 		<form method="post" action="">
 			<input type="hidden" name="writemodule" value="NewsWriteModule" />
 			<input type="hidden" name="id" value="{@id}" />
 			<div class="form-group">
-				<h2>Добавление новости</h2>
+				<h2>
+					<xsl:value-of select="$h2" />
+				</h2>
 				<div class="form-field">
 					<label>Заголовок</label>
 					<input name="title" value="{@title}" />
@@ -44,16 +49,21 @@
 			</div>
 		</form>
 	</xsl:template>
-	
+
 	<!-- news item -->
 	<xsl:template match="module[@name='news' and @action='show']" mode="p-module">
 		<xsl:apply-templates select="newsitem " mode="p-news-show-item"/>
 	</xsl:template>
 	<!-- news item -->
 	<xsl:template match="*" mode="p-news-show-item">
+
+		<xsl:call-template name="adminEdit">
+			<xsl:with-param name="document" select="." />
+		</xsl:call-template>
+
 		<div class="news_item_inner">
 			<h2>
-				<xsl:value-of select="@title" />
+				<xsl:value-of select="@title" />sss
 			</h2>
 			<div class="date">
 				<xsl:value-of select="@date" />
@@ -63,7 +73,7 @@
 			</div>
 		</div>
 	</xsl:template>
-	
+
 	<!-- LISTS -->
 	<!-- news list with 2 columnss -->
 	<xsl:template match="module[@name='news' and @action='list' and @mode='columns']" mode="p-module">

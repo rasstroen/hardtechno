@@ -75,7 +75,7 @@ class Newsitem extends BaseObjectClass {
 
 	function getImage() {
 		$this->load();
-		return Config::need('www_path') . '/upload/news/' . $this->data['image'];
+		return Config::need('www_path') . '/static/upload/news/' . $this->data['image'];
 	}
 
 	function getCommentCount() {
@@ -91,6 +91,8 @@ class Newsitem extends BaseObjectClass {
 		    'path' => $this->getUrl(),
 		    'comment_count' => $this->getCommentCount(),
 		    'image' => $this->getImage(),
+		    'path' => Config::need('www_path').'/news/'.$this->id,
+		    'path_edit' => Config::need('www_path').'/news/'.$this->id.'/edit',
 		);
 		return $out;
 	}

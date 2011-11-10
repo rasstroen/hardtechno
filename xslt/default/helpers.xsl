@@ -5,15 +5,27 @@
 	<xsl:output omit-xml-declaration="yes"/>
 	<xsl:output indent="yes"/>
 
+
+	<xsl:template name="adminEdit">
+		<xsl:param name="document" select="." />
+		<xsl:if test="&role; > 49">
+			<div class="admin_edit_div">
+				<a href="{@path_edit}">редактировать</a>
+			</div>
+		</xsl:if>
+	</xsl:template>
+			
+			
 	<xsl:template name="helpers-lang-code-select">
 		<xsl:param name="object" select="book"/>
 		<select name="lang_code" class="lang-code-select">
 			<xsl:for-each select="$object/lang_codes/item">
 				<option value="{@code}">
-          <xsl:if test="(($object/@lang_id)=@id) or (not($object/@land_id) and @code='ru')">
+					<xsl:if test="(($object/@lang_id)=@id) or (not($object/@land_id) and @code='ru')">
 						<xsl:attribute name="selected"/>
 					</xsl:if>
-          <xsl:value-of select="@title"/> (<xsl:value-of select="@code"/>)
+					<xsl:value-of select="@title"/> (
+					<xsl:value-of select="@code"/>)
 				</option>
 			</xsl:for-each>
 		</select>
@@ -52,8 +64,8 @@
 		<xsl:param name="words"/>
 		<xsl:variable name="mod10" select="$amount mod 10"/>
 		<xsl:variable name="f5t20" select="$amount>=5 and not($amount>20)"/>
-    <xsl:value-of select="$amount"/>
-    <xsl:text>&nbsp;</xsl:text>
+		<xsl:value-of select="$amount"/>
+		<xsl:text>&nbsp;</xsl:text>
 		<xsl:choose>
 			<xsl:when test="not($f5t20) and $mod10=1">
 				<xsl:value-of select="substring-before($words,' ')"/>
@@ -77,36 +89,37 @@
 	</xsl:template>
 
 	<xsl:template match="*" mode="helpers-book-link">
-    <a href="{@path}">
+		<a href="{@path}">
 			<xsl:value-of select="@title"/>
 		</a>
 	</xsl:template>
 
 	<xsl:template match="*" mode="helpers-file-link">
-    <a href="{@path}">
-      <xsl:value-of select="@filetypedesc"/>, <xsl:apply-templates select="." mode="helpers-file-size"/>
+		<a href="{@path}">
+			<xsl:value-of select="@filetypedesc"/>, 
+			<xsl:apply-templates select="." mode="helpers-file-size"/>
 		</a>
 	</xsl:template>
 
-  <xsl:template match="*" mode="helpers-file-size">
-    <xsl:variable select="@size div 1024" name="kb"/>
-    <xsl:variable select="$kb div 1024" name="mb"/>
-    <xsl:choose>
-      <xsl:when test="$mb > 1">
-        <xsl:value-of select="round(100*$mb) div 100"/> МБ
-      </xsl:when>
-      <xsl:when test="$kb > 1">
-        <xsl:value-of select="round($kb)"/> КБ
-      </xsl:when>
-    	<xsl:otherwise></xsl:otherwise>
-    </xsl:choose>
-    <xsl:if test="$mb > 1">
-    </xsl:if>
-  </xsl:template>
+	<xsl:template match="*" mode="helpers-file-size">
+		<xsl:variable select="@size div 1024" name="kb"/>
+		<xsl:variable select="$kb div 1024" name="mb"/>
+		<xsl:choose>
+			<xsl:when test="$mb > 1">
+				<xsl:value-of select="round(100*$mb) div 100"/> МБ
+			</xsl:when>
+			<xsl:when test="$kb > 1">
+				<xsl:value-of select="round($kb)"/> КБ
+			</xsl:when>
+			<xsl:otherwise></xsl:otherwise>
+		</xsl:choose>
+		<xsl:if test="$mb > 1">
+		</xsl:if>
+	</xsl:template>
 
 	<xsl:template match="*" mode="helpers-book-cover">
-    <a href="{@path}">
-      <img src="{@cover}?{@lastSave}" alt="[{@title}]" />
+		<a href="{@path}">
+			<img src="{@cover}?{@lastSave}" alt="[{@title}]" />
 		</a>
 	</xsl:template>
 
@@ -125,15 +138,15 @@
 
 	<xsl:template match="*" mode="helpers-author-link">
 		<a href="{@path}">
-      <xsl:call-template name="helpers-author-name">
-        <xsl:with-param select="." name="author"/>
-      </xsl:call-template>
+			<xsl:call-template name="helpers-author-name">
+				<xsl:with-param select="." name="author"/>
+			</xsl:call-template>
 		</a>
 	</xsl:template>
 
 	<xsl:template match="*" mode="helpers-author-image">
 		<a href="{@path}">
-      <img src="{@picture}?{@lastSave}" alt="[{@name}]" />
+			<img src="{@picture}?{@lastSave}" alt="[{@name}]" />
 		</a>
 	</xsl:template>
 
@@ -145,7 +158,7 @@
 
 	<xsl:template match="*" mode="helpers-user-image">
 		<a href="{@path}">
-      <img src="{@picture}?{@lastSave}" alt="[{@nickname}]" title="{@nickname}"/>
+			<img src="{@picture}?{@lastSave}" alt="[{@nickname}]" title="{@nickname}"/>
 		</a>
 	</xsl:template>
 
@@ -167,20 +180,20 @@
 		</a>
 	</xsl:template>
 
-  <xsl:template match="*" mode="helpers-variant-link">
+	<xsl:template match="*" mode="helpers-variant-link">
 		<a href="{@path}">
 			<xsl:value-of select="@title"/>
 		</a>
-  </xsl:template>
+	</xsl:template>
 
-  <xsl:template match="*" mode="h-stylesheet">
-    <xsl:variable name="path" select="concat(&prefix;,'static/default/css/',@path,'.css')"/>
-    <link href="{$path}" media="screen" rel="stylesheet" type="text/css"/>
-  </xsl:template>
+	<xsl:template match="*" mode="h-stylesheet">
+		<xsl:variable name="path" select="concat(&prefix;,'static/default/css/',@path,'.css')"/>
+		<link href="{$path}" media="screen" rel="stylesheet" type="text/css"/>
+	</xsl:template>
 
-  <xsl:template match="*" mode="h-javascript">
-    <xsl:variable name="path" select="concat(&prefix;,'static/default/js/',@path,'.js')"/>
-    <script src="{$path}" type="text/javascript"></script>
-  </xsl:template>
+	<xsl:template match="*" mode="h-javascript">
+		<xsl:variable name="path" select="concat(&prefix;,'static/default/js/',@path,'.js')"/>
+		<script src="{$path}" type="text/javascript"></script>
+	</xsl:template>
 
 </xsl:stylesheet>

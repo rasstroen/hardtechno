@@ -4,6 +4,8 @@ class StructureParser {
 
 	private static $modules;
 	private static $data;
+	public static $cache_seconds = 5;
+	public static $partials_cache_time = 5;
 
 	public static function clear() {
 		self::$modules = array();
@@ -11,11 +13,16 @@ class StructureParser {
 	}
 
 	public static function XMLToArray($path_to_structure, $path_to_default) {
-		self::parse($path_to_default);
-		self::parse($path_to_structure);
-		self::$data['path'] = $path_to_structure;
-		if (!self::getLayoutPath())
-			throw new Exception('missed layout header in structure file ' . $path_to_structure);
+		if (list(self::$data, self::$modules) = Cache::get('structure_' . $path_to_structure)) {
+			
+		} else {
+			self::parse($path_to_default);
+			self::parse($path_to_structure);
+			self::$data['path'] = $path_to_structure;
+			if (!self::getLayoutPath())
+				throw new Exception('missed layout header in structure file ' . $path_to_structure);
+			Cache::set('structure_' . $path_to_structure, array(self::$data, self::$modules), self::$cache_seconds);
+		}
 	}
 
 	private static function parse($path) {
@@ -61,6 +68,26 @@ class StructureParser {
 			self::$modules[] = $module;
 	}
 
+	private static function createFileFromPartials($files, $tmp_name, $ext = 'js') {
+		$exists = Cache::get('partfile_' . $tmp_name . '.' . $ext);
+		if ($exists) {
+			return $tmp_name;
+		}
+		// склеиваем файлы в один
+		$filename = Config::need('static_path') . '/default/' . $ext . '/transform/' . $tmp_name . '.' . $ext;
+		$full_data = '';
+		foreach ($files as $file) {
+			if ($file['path'] == 'tiny_mce/tiny_mce')
+				continue;
+			$fn = Config::need('static_path') . '/default/' . $ext . '/' . $file['path'] . '.' . $ext;
+			if (file_exists($fn))
+				$full_data.="\n\n" . file_get_contents($fn);
+		}
+		file_put_contents($filename, $full_data);
+		Cache::set('partfile_' . $tmp_name . '.' . $ext, time(), self::$partials_cache_time);
+		return $tmp_name;
+	}
+
 	public static function toXML() {
 		$node = XMLClass::$xml->createElement('structure');
 		$data = XMLClass::$xml->createElement('data');
@@ -87,6 +114,19 @@ class StructureParser {
 					$data->appendChild($Node);
 					break;
 				case 'stylesheet':case 'javascript':
+					$tmpname = '';
+					$additional_js = array();
+					foreach ($value as $item) {
+						$tmpname.=implode('|', $item);
+						if ($item['path'] == 'tiny_mce/tiny_mce') {
+							$additional_js[] = $item;
+						}
+					}
+					self::createFileFromPartials($value, md5($tmpname), $field == 'stylesheet' ? 'css' : 'js');
+					$value = $additional_js;
+					$value[] = array('path' => 'transform/' . md5($tmpname));
+
+
 					foreach ($value as $item) {
 						$Node = XMLClass::$xml->createElement($field);
 						foreach ($item as $f => $v)

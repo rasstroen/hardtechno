@@ -201,7 +201,7 @@ class Cache {
 			$filename = 'xml_' . $current_user->getRole() . '|' . self::$theme . '|' . self::$language . '|' . $name;
 		else
 			$filename = 'var_' . $name;
-		Log::logHtml($filename . ' put into xcache');
+		Log::logHtml($filename . ' put into xcache for '.$cache_seconds.' s.');
 		xcache_set($filename, $value, $cache_seconds);
 	}
 
