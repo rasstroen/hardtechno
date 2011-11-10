@@ -1,3 +1,8 @@
+#html{
+	height:500px !important;
+	width:580px !important;
+}
+
 .news_item{
 	position: relative;
 	border: 1px solid #fff;

@@ -34,11 +34,12 @@
 	height:80px;
 }
 
-.clearme
+.clear
 {
 	font-size: 1px;
 	height:1px;
 	width:1px;
+	clear:both;
 }
 
 .comment_nick 

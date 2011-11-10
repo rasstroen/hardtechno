@@ -2,6 +2,7 @@
 <structure>
 	<data>
 		<javascript path="tiny_mce/tiny_mce"/>
+		<stylesheet path="partials/news"/>
 		<javascript path="partials/news_edit" />
 		<stylesheet path="jquery-ui-1.8.16.custom"/>
 		<stylesheet path="jquery-ui-timepicker-addon"/>

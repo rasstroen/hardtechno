@@ -34,18 +34,14 @@
 					</textarea>
 				</div>
 				<div class="form-field description">
-					<label>Текст файла</label>
+					<label>HTML</label>
 					<textarea id="html" name="html">
 						<xsl:value-of select="@html"/>
 					</textarea>
 				</div>
-				<div class="form-field">
-					<label>Путь до файла (относительно папки features/)</label>
-					<input name="filepath" value="{@filepath}"/>
-				</div>
 			</div>
 			<div class="form-control">
-				<input type="submit" value="Сохранить информацию"/>
+				<input type="submit" value="Сохранить"/>
 			</div>
 		</form>
 	</xsl:template>
