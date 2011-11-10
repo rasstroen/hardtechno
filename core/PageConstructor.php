@@ -179,7 +179,7 @@ class PageConstructor {
 					return $t;
 					break;
 				case 'shelf-name':
-					if($val == 'loved') return 'Люимые книги';
+					if($val == 'loved') return 'Любимые книги';
 					return isset(Config::$shelves[Config::$shelfIdByNames[$val]]) ? Config::$shelves[Config::$shelfIdByNames[$val]] : $val;
 					break;
 				case 'magazine-title':

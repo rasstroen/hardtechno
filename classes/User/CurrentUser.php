@@ -80,8 +80,8 @@ class CurrentUser extends User {
 		} else {
 			$time = time() + Config::need('auth_cookie_lifetime');
 		}
-		Request::headerCookie(Config::need('auth_cookie_hash_name'), $value, $time, '/', Config::need('www_domain'), false, true);
-		Request::headerCookie(Config::need('auth_cookie_id_name'), $this->id, time() + Config::need('auth_cookie_lifetime'), '/', Config::need('www_domain'), false, true);
+		Request::headerCookie(Config::need('auth_cookie_hash_name'), $value, $time, '/', Config::need('www_domain'), false, false);
+		Request::headerCookie(Config::need('auth_cookie_id_name'), $this->id, time() + Config::need('auth_cookie_lifetime'), '/', Config::need('www_domain'), false, false);
 	}
 
 	// авторизуем пользователя по кукам
