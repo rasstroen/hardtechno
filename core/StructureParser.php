@@ -73,11 +73,12 @@ class StructureParser {
 		if ($exists) {
 			return $tmp_name;
 		}
+		$concat_static_enabled = Config::need('concat_static' , false);
 		// склеиваем файлы в один
 		$filename = Config::need('static_path') . '/default/' . $ext . '/transform/' . $tmp_name . '.' . $ext;
 		$full_data = '';
 		foreach ($files as $file) {
-			if ($file['path'] == 'tiny_mce/tiny_mce')
+			if (!$concat_static_enabled || ($file['path'] == 'tiny_mce/tiny_mce'))
 				continue;
 			$fn = Config::need('static_path') . '/default/' . $ext . '/' . $file['path'] . '.' . $ext;
 			if (file_exists($fn))
@@ -104,7 +105,7 @@ class StructureParser {
 
 		$node->appendChild($data);
 		$node->appendChild($blocks);
-
+		$concat_static_enabled = Config::need('concat_static' , false);
 		foreach (self::$data as $field => $value) {
 			switch ($field) {
 				case 'title':
@@ -118,7 +119,7 @@ class StructureParser {
 					$additional_js = array();
 					foreach ($value as $item) {
 						$tmpname.=implode('|', $item);
-						if ($item['path'] == 'tiny_mce/tiny_mce') {
+						if (!$concat_static_enabled || ($item['path'] == 'tiny_mce/tiny_mce')){
 							$additional_js[] = $item;
 						}
 					}
