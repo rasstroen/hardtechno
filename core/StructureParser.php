@@ -84,7 +84,10 @@ class StructureParser {
 			if (file_exists($fn))
 				$full_data.="\n\n" . file_get_contents($fn);
 		}
-		file_put_contents($filename, $full_data);
+	if ($full_data) {
+			file_put_contents($filename, $full_data);
+			Cache::set('partfile_' . $tmp_name . '.' . $ext, time(), self::$partials_cache_time);
+		}
 		Cache::set('partfile_' . $tmp_name . '.' . $ext, time(), self::$partials_cache_time);
 		return $tmp_name;
 	}
