@@ -1,5 +1,13 @@
 <?php
 
+function sort_by_id($a, $b) {
+	if ($a['id'] > $b['id'])
+		return 1;
+	if ($a['id'] < $b['id'])
+		return -1;
+	return 0;
+}
+
 class Jchat_module extends JBaseModule {
 
 	public $max_messages = 100;
@@ -81,6 +89,7 @@ class Jchat_module extends JBaseModule {
 			$uids[$message['id_user']] = $message['id_user'];
 		}
 		$out['messages'] = array_slice($messages, -$this->max_messages);
+		uasort($out['messages'], 'sort_by_id');
 		$out['users'] = $this->getMessagesUsers($uids);
 		return $out;
 	}
