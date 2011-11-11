@@ -7,7 +7,7 @@ body{
         width: 100%;
 	height: 100%;
         overflow: hidden;
-        background: #aaa;
+        background: #f4f4f4;
 }
 
 #chat_send_plank_div{
@@ -25,15 +25,20 @@ body{
 	margin:5px;
 	width:60%;
 	float:left;
+	border:1px solid #222;
 }
 
 #chat_send_plank_div #chat_submit{
 	height:20px;
 	margin:5px;
 	border:1px solid #222;
-	background: #bebebe;
+	background: #ebebeb;
 	line-height: 20px;
 	padding-bottom:5px;
 	width:100px;
 	float:left;
+}
+
+#chat #chat_messages_window{
+	
 }

@@ -16,6 +16,10 @@ var chat = {
 	//
 	// can i write?
 	can_write : false,
+	// timer link
+	timer_v : false,
+	// div with messages
+	chat_messages_window : false,
 	// chat status
 	status : 1,
 	// statuses
@@ -49,6 +53,8 @@ var chat = {
 		chat.messages = {};
 		chat.profile = {};
 		chat.status = 1;
+		if(chat.timer_v)
+			clearInterval(chat.timer_v);
 		chat.last_message_received_id = 0;
 		chat.last_message_received_time = 0;
 		chat.authCookie = chat.getCookie(chat.authCookieName);
@@ -122,7 +128,7 @@ var chat = {
 	},
 	start_timer : function(){
 		chat.on_timer();
-		setInterval('chat.on_timer()',chat.refreshSpeed*1000);
+		chat.timer_v = setInterval('chat.on_timer()',chat.refreshSpeed*1000);
 	},
 	on_timer: function(){
 		// if it's no pending get requests
@@ -184,12 +190,17 @@ var chat = {
 	},
 	// inserting message div by message object into chat window
 	draw_message : function(message){
+		if(!chat.chat_messages_window){
+			chat.chat_messages_window = document.createElement('DIV');
+			chat.chat_messages_window.id = 'chat_messages_window';
+			chat.divElement.appendChild(chat.chat_messages_window);
+		}
 		var message_plank = document.createElement('div');
 		message_plank.id = 'message_'+message.id;
 		message_plank.name = 'chat_message';
 		message_plank.innerHTML = message.message;
 		// find place
-		chat.divElement.appendChild(message_plank);
+		chat.chat_messages_window.appendChild(message_plank);
 	},
 	// getting browser's Cookie
 	getCookie : function (c_name){
