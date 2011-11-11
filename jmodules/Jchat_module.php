@@ -2,7 +2,7 @@
 
 class Jchat_module extends JBaseModule {
 
-	public $max_messages = 10;
+	public $max_messages = 100;
 
 	function process() {
 		global $current_user;

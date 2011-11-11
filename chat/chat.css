@@ -40,5 +40,8 @@ body{
 }
 
 #chat #chat_messages_window{
-	
+	height: 96%;
+	width: 100%;
+	overflow: scroll;
+	background: #fff;
 }

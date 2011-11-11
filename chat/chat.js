@@ -1,3 +1,6 @@
+/**
+ * hardtechno.ru chat by rasstroen (http://vkontekte.ru/server_side)
+ */
 var chat = {
 	//
 	// settings
@@ -159,6 +162,9 @@ var chat = {
 		chat.status = chat.status_request_sended_fetch;
 		chat.request(data, chat.on_after_get);
 	},
+	show_last_messages : function(){
+		chat.chat_messages_window.scrollTop = chat.chat_messages_window.scrollHeight;	
+	},
 	on_after_get : function(data){
 		if(data && data['success']){
 			if(data.messages){
@@ -169,6 +175,7 @@ var chat = {
 						chat.draw_message(data.messages[i]);
 						chat.last_message_received_id = Math.max(chat.last_message_received_id, data.messages[i].id)
 						chat.last_message_received_time = Math.max(chat.last_message_received_time, data.messages[i].time)
+						chat.show_last_messages();
 					}
 				}
 			}
@@ -187,6 +194,7 @@ var chat = {
 		chat.last_message_received_id = data.last_message_id;
 		chat.on_after_get(data);
 		chat.chat_input.disabled = '';
+		chat.show_last_messages();
 	},
 	// inserting message div by message object into chat window
 	draw_message : function(message){
