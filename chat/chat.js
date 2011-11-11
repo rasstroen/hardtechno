@@ -35,6 +35,8 @@ var chat = {
 	last_message_received_time : 0,
 	// messages
 	messages : {},
+	// users
+	users : {},
 	// element on page for draw chat
 	divElement:false,
 	// container for message input & button
@@ -167,6 +169,11 @@ var chat = {
 	},
 	on_after_get : function(data){
 		if(data && data['success']){
+			if(data.users){
+				for(var i in data.users){
+					chat.users[i] = data.users[i];
+				}
+			}
 			if(data.messages){
 				for(var i in data.messages){
 					if(!chat.messages[data.messages[i].id]){
@@ -181,7 +188,7 @@ var chat = {
 			}
 			if(data.refresh){
 				chat.init(chat.divElement.id)
-			}
+			}	
 			if(data.last_message_id>-1){
 				chat.last_message_received_id = data.last_message_id;
 			}
@@ -197,7 +204,8 @@ var chat = {
 		chat.show_last_messages();
 	},
 	draw_user: function(id){
-		return id;
+		//chat.users[id].nickname
+		return '<img src="'+chat.users[id].picture+'"></img>';
 	},
 	// inserting message div by message object into chat window
 	draw_message : function(message){
