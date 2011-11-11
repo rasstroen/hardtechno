@@ -45,3 +45,19 @@ body{
 	overflow: scroll;
 	background: #fff;
 }
+
+#chat #chat_messages_window .message_plank{
+	clear:both;
+}
+
+#chat #chat_messages_window .message_plank .message_author_div{
+	float:left;
+}
+
+#chat #chat_messages_window .message_plank .message_time_div{
+	float:left;
+}
+
+#chat #chat_messages_window .message_plank .message_text_div{
+	float:left;
+}

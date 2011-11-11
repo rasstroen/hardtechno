@@ -81,6 +81,9 @@ class Jchat_module extends JBaseModule {
 	function getMessages($from_id, $uid) {
 		$out = array();
 		$messages = Database::sql2array('SELECT * FROM `hard_chat` ORDER BY `id` DESC LIMIT ' . $this->max_messages, 'id');
+		foreach ($messages as &$m) {
+			$m['date_time'] = date('Y/m/d H:i:s', $m['time']);
+		}
 		$uids = array();
 		foreach ($messages as $id => $message) {
 			// if id < requested last message

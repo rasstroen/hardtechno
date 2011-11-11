@@ -196,6 +196,9 @@ var chat = {
 		chat.chat_input.disabled = '';
 		chat.show_last_messages();
 	},
+	draw_user: function(id){
+		return id;
+	},
 	// inserting message div by message object into chat window
 	draw_message : function(message){
 		if(!chat.chat_messages_window){
@@ -205,8 +208,26 @@ var chat = {
 		}
 		var message_plank = document.createElement('div');
 		message_plank.id = 'message_'+message.id;
+		message_plank.className = 'message_plank';
 		message_plank.name = 'chat_message';
-		message_plank.innerHTML = message.message;
+		
+		var message_author_div = document.createElement('div');
+		message_author_div.id = 'message_author_div'+message.id;
+		message_author_div.className = 'message_author_div';
+		message_plank.appendChild(message_author_div);
+		message_author_div.innerHTML = chat.draw_user(message.id_user)
+		
+		var message_time_div = document.createElement('div');
+		message_time_div.id = 'message_time_div'+message.id;
+		message_time_div.className = 'message_time_div';
+		message_plank.appendChild(message_time_div);
+		message_time_div.innerHTML = message.date_time;
+		
+		var message_text_div = document.createElement('div');
+		message_text_div.id = 'message_text_div'+message.id;
+		message_text_div.className = 'message_text_div';
+		message_plank.appendChild(message_text_div);
+		message_text_div.innerHTML = message.message;
 		// find place
 		chat.chat_messages_window.appendChild(message_plank);
 	},
