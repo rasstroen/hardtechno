@@ -12,7 +12,7 @@ var chat = {
 	// cookie name with user id
 	authCookieIdName:'thardid_',
 	// chat refresh interval in seconds
-	refreshSpeed: 3.8,
+	refreshSpeed: 0.8,
 	// translates
 	translate_say : 'написать',
 	// variables
@@ -35,6 +35,8 @@ var chat = {
 	last_message_received_time : 0,
 	// messages
 	messages : {},
+        // count
+        messages_count : 0,
 	// users
 	users : {},
 	// element on page for draw chat
@@ -185,6 +187,7 @@ var chat = {
 						chat.show_last_messages();
 					}
 				}
+                                $('abbr.timeago').timeago();
 			}
 			if(data.refresh){
 				chat.init(chat.divElement.id)
@@ -209,33 +212,42 @@ var chat = {
 	},
 	// inserting message div by message object into chat window
 	draw_message : function(message){
+                chat.messages_count++;
 		if(!chat.chat_messages_window){
 			chat.chat_messages_window = document.createElement('DIV');
 			chat.chat_messages_window.id = 'chat_messages_window';
 			chat.divElement.appendChild(chat.chat_messages_window);
 		}
+                var odd = 0;
+                if(chat.messages_count % 2 == 0) odd =1;
 		var message_plank = document.createElement('div');
 		message_plank.id = 'message_'+message.id;
-		message_plank.className = 'message_plank';
+		message_plank.className = 'message_plank'+(odd?' odd':'');
 		message_plank.name = 'chat_message';
+		
+		var message_time_div = document.createElement('div');
+		message_time_div.id = 'message_time_div'+message.id;
+		message_time_div.className = 'message_time_div';
+		message_plank.appendChild(message_time_div);
+                var _time ='<abbr class="timeago" title="'+message.date_time+'">'+message.date_time+'</abbr>';
+		message_time_div.innerHTML = _time + '<br clear="all"/><div class="chat_nickname">' + chat.users[message.id_user].nickname + '</div>';
+		
 		
 		var message_author_div = document.createElement('div');
 		message_author_div.id = 'message_author_div'+message.id;
 		message_author_div.className = 'message_author_div';
 		message_plank.appendChild(message_author_div);
 		message_author_div.innerHTML = chat.draw_user(message.id_user)
-		
-		var message_time_div = document.createElement('div');
-		message_time_div.id = 'message_time_div'+message.id;
-		message_time_div.className = 'message_time_div';
-		message_plank.appendChild(message_time_div);
-		message_time_div.innerHTML = message.date_time;
+
+
+                
 		
 		var message_text_div = document.createElement('div');
 		message_text_div.id = 'message_text_div'+message.id;
 		message_text_div.className = 'message_text_div';
 		message_plank.appendChild(message_text_div);
 		message_text_div.innerHTML = message.message;
+                message_plank.innerHTML += '<div class="chat_clear" />';
 		// find place
 		chat.chat_messages_window.appendChild(message_plank);
 	},

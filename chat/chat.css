@@ -48,16 +48,57 @@ body{
 
 #chat #chat_messages_window .message_plank{
         clear:both;
+        padding: 3px 0px 3px 0px;
+        background: #fafafa;
+}
+
+#chat #chat_messages_window .message_plank.odd{
+        background: #fff;
+}
+
+.chat_clear{
+        display: block;
+        height:1px;
+        overflow: hidden;
+        clear: both;
 }
 
 #chat #chat_messages_window .message_plank .message_author_div{
         float:left;
+        width: 30px;
+        height:30px;
+        overflow: hidden;
+        text-align: center;
+        vertical-align: middle;
+        padding-right: 3px;
+}
+
+#chat #chat_messages_window .message_plank .message_author_div img{
+        max-height: 30px;
+        max-width: 30px;
+        width:100%;
 }
 
 #chat #chat_messages_window .message_plank .message_time_div{
         float:left;
+        text-align: right;
+        clear: right;
+        color: #777;
+        width:110px;
+        overflow: hidden;
+        font-size: 10px;
+        padding-right: 4px;
+}
+
+#chat #chat_messages_window .message_plank .message_time_div .chat_nickname{
+        float:right;
+        color: #222;
+        font-size: 12px;
 }
 
 #chat #chat_messages_window .message_plank .message_text_div{
-        float:left;
+        padding-left:5px;
+        font-size:13px;
+        color: #100;
+        font-family: arial, tahoma;
 }
