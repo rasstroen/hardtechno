@@ -12,7 +12,7 @@ var chat = {
 	// cookie name with user id
 	authCookieIdName:'thardid_',
 	// chat refresh interval in seconds
-	refreshSpeed: 4.8,
+	refreshSpeed: 1,
 	// translates
 	translate_say : 'написать',
 	// variables
@@ -272,7 +272,8 @@ var chat = {
 	},
 	draw_user: function(id){
 		//chat.users[id].nickname
-		return '<img onclick="chat.write_private('+chat.users[id].id+')" alt="'+chat.users[id].nickname+'" title="'+chat.users[id].nickname+'" src="'+chat.users[id].picture+'"></img>';
+		if(chat.users[id])
+		return '<img onclick="chat.write_private('+chat.users[id].id+')" alt="написать приватное сообщение для '+chat.users[id].nickname+'" title="написать приватное сообщение для '+chat.users[id].nickname+'" src="'+chat.users[id].picture+'"></img>';
 	},
 	// inserting message div by message object into chat window
 	draw_message : function(message){

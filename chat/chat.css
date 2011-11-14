@@ -86,6 +86,7 @@ body{
         max-height: 30px;
         max-width: 30px;
         width:100%;
+	cursor: pointer;
 }
 
 #chat #chat_messages_window .message_plank .message_time_div{

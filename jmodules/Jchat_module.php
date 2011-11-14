@@ -39,7 +39,7 @@ class Jchat_module extends JBaseModule {
 	function doAdminFunction($message) {
 		$message = explode(' ', $message);
 		switch ($message[0]) {
-			case 'clear':
+			case '/clear':
 				Database::query('TRUNCATE `hard_chat`');
 				// clearing chat
 				$this->data['refresh'] = true;
@@ -68,6 +68,10 @@ class Jchat_module extends JBaseModule {
 				break;
 		}
 		$message = implode(' ', $message);
+
+		// links
+		$message = preg_replace('#(?<!\])http://[^\s\[<]+#i', "<a href=\"$0\" target=\"_blank\">$0</a>", $message);
+
 		return array($push, $message, $private);
 	}
 
