@@ -198,6 +198,8 @@ var chat = {
 	},
 	refresh_onliners : function(){
 		chat.online_users_count = 0;
+		if(chat.chat_online_window)
+		chat.chat_online_window.innerHTML = '';
 		for(var i in chat.online_users){
 			chat.online_users_count++;
 			chat.draw_online_user(chat.online_users[i]);
@@ -210,7 +212,6 @@ var chat = {
 			chat.chat_online_window.id = 'chat_online_window';
 			chat.divElement.appendChild(chat.chat_online_window);
 		}
-		chat.chat_online_window.innerHTML = '';
 		var odd = 0;
 		if(chat.online_users_count % 2 == 0) odd =1;
 		var online_plank = document.createElement('div');

@@ -106,11 +106,21 @@ body{
 #chat #chat_online_window{
 	position: absolute;
 	top : 0px;
-	right: 0px;
+	right: 20px;
 	width:160px;
 	height:280px;
 	overflow: auto;
-	background: #faafaa;
+	background: #fafafa;
+	border: 1px solid #a0a0a0;
+	opacity: 0.20;
+	-moz-opacity: 0.2; 
+}
+
+
+#chat #chat_online_window:hover{
+	opacity: 1;
+	-moz-opacity: 1.0;
+	height:96%;
 }
 
 .online_author_div{

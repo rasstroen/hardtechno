@@ -11,7 +11,7 @@ function sort_by_id($a, $b) {
 class Jchat_module extends JBaseModule {
 
 	public $max_messages = 100;
-	public $onlineInterval = 300;
+	public $onlineInterval = 30;
 
 	function process() {
 		global $current_user;
@@ -98,6 +98,11 @@ class Jchat_module extends JBaseModule {
 		}
 		$out['messages'] = array_slice($messages, -$this->max_messages);
 		uasort($out['messages'], 'sort_by_id');
+		foreach ($out['messages'] as $m) {
+			$out['real_messages'][$m['time']] = $m;
+		}
+		if (isset($out['real_messages']))
+			$out['messages'] = $out['real_messages'];
 		$out['users'] = $this->getMessagesUsers($uids);
 		return $out;
 	}
@@ -127,15 +132,28 @@ class Jchat_module extends JBaseModule {
 	}
 
 	function setOnlineUser($uid) {
-		$xcachename = 'chat_online_users';
-		$uids = Cache::get($xcachename);
-		$uids[$uid] = $uid;
-		Cache::set($xcachename, $uids, $this->onlineInterval);
+		$xcachename = 'uon_' . $uid;
+		$uid_exists = Cache::get($xcachename);
+		if (!$uid_exists) { // new user?
+			$time = time();
+			$query = 'INSERT INTO `hard_chat_online` SET `id`=' . $uid . ', `time`=' . $time . ' ON DUPLICATE KEY UPDATE `time`=' . $time;
+			Database::query($query);
+			Cache::set($xcachename, $uid, $this->onlineInterval);
+			Cache::drop('chat_online_users');
+		} else {
+			
+		}
 	}
 
 	function getChatOnlineUsers() {
 		$xcachename = 'chat_online_users';
 		$uids = Cache::get($xcachename);
+		if ($uids !== null) {
+			
+		} else {
+			$uids = array_keys(Database::sql2array('SELECT `id` FROM `hard_chat_online` WHERE `time`>' . (time() - $this->onlineInterval), 'id'));
+			Cache::set($xcachename, $uids, $this->onlineInterval);
+		}
 		return $this->getMessagesUsers($uids);
 	}
 
