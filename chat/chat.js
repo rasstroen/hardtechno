@@ -100,14 +100,35 @@ var chat = {
 			chat.send();
 		}
 	},
+	// меняем favicon
+	changeIcon :   function(url){
+		var head = document.getElementsByTagName("head")[0];
+		// удаление старой иконки
+		var links = head.getElementsByTagName("link");
+		for (var i = 0; i < links.length; i++) {
+			var lnk = links[i];
+			if (lnk.rel=="shortcut icon") {
+				head.removeChild(lnk);
+				return;
+			}
+		}
+
+		// создание и добавление новой иконки
+		var link = document.createElement("link");
+		link.setAttribute("href", url);
+		link.setAttribute("type","image/x-icon");
+		link.setAttribute("rel","shortcut icon");
+		head.appendChild(link);
+	},
+	// пишем приват
 	write_private : function(id){
 		var tmp = 's';
 		if(chat.online_users[id]){
 			tmp = '/to '+chat.online_users[id].nickname.toString() +' '+ chat.chat_input.value;
 		}else
-		if(chat.users[id]){
-			tmp = '/to '+chat.users[id].nickname.toString() +' '+chat.chat_input.value;
-		}else
+			if(chat.users[id]){
+				tmp = '/to '+chat.users[id].nickname.toString() +' '+chat.chat_input.value;
+			}else
 			tmp = '/to '+id.toString() +' '+ chat.chat_input.value;
 		chat.chat_input.value = tmp;
 		chat.chat_input.focus();
@@ -134,228 +155,228 @@ var chat = {
 		_button.onclick = function(){
 			chat.send();
 		}
-		chat.chat_submit = _button;
-		chat.send_plank_div.appendChild(_button);
+	chat.chat_submit = _button;
+	chat.send_plank_div.appendChild(_button);
 		
-		chat.chat_input.focus();
-	},
-	set_authorized : function (is_authorized){
-		if(is_authorized)	{
-			chat.can_write = 1;
-			chat.drawInput();
-		}else{
+	chat.chat_input.focus();
+},
+set_authorized : function (is_authorized){
+	if(is_authorized)	{
+		chat.can_write = 1;
+		chat.drawInput();
+	}else{
                         
 	}
-	},
-	on_authorize : function(data){
-		if(data && data.success){
-			// authorized, so we can wrote
-			chat.profile = data.profile;
-			chat.set_authorized(true);
-		}else
-			chat.set_authorized(false);
-		chat.start_timer();
-	},
-	start_timer : function(){
-		chat.on_timer();
-		chat.timer_v = setInterval('chat.on_timer()',chat.refreshSpeed*1000);
-	},
-	on_timer: function(){
-		// if it's no pending get requests
-		// put new request
-		if(chat.status == chat.status_wait){
-			chat.requestNumber++;
-			// we can sent request to fetch data
-			chat.get(chat.requestNumber % chat.getOnlinersAfter == 0);
-		}
-	},
-	send : function(){
-		chat.status = chat.status_request_sended_message;
-		var data = {};
-		data.action = 'say';
-		data.message = document.getElementById('chat_input').value;
-		data.last_message_received_id = chat.last_message_received_id;
-		data.last_message_received_time = chat.last_message_received_time;
-		// message not empty & we are authorized to write
-		if(data.message && chat.can_write){
-			chat.chat_input.disabled = 'disabled';
-			chat.request(data, chat.on_after_send);
-		}
-		chat.chat_input.value = '';
-	},
-	// request for get messages
-	get : function(get_onliners){
-		var data = {};
-		data.action = 'fetch';
-		data.get_onliners = get_onliners? 1 : 0;
-		data.last_message_received_id = chat.last_message_received_id;
-		data.last_message_received_time = chat.last_message_received_time;
-		chat.status = chat.status_request_sended_fetch;
-		chat.request(data, chat.on_after_get);
-	},
-	show_last_messages : function(){
-		chat.chat_messages_window.scrollTop = chat.chat_messages_window.scrollHeight;	
-	},
-	refresh_onliners : function(){
-		chat.online_users_count = 0;
-		if(chat.chat_online_window)
-			chat.chat_online_window.innerHTML = '';
-		for(var i in chat.online_users){
-			chat.online_users_count++;
-			chat.draw_online_user(chat.online_users[i]);
-		}
-	},
-	draw_online_user : function(profile){
-		chat.messages_count++;
-		if(!chat.chat_online_window){
-			chat.chat_online_window = document.createElement('DIV');
-			chat.chat_online_window.id = 'chat_online_window';
-			chat.divElement.appendChild(chat.chat_online_window);
-		}
-		var odd = 0;
-		if(chat.online_users_count % 2 == 0) odd =1;
-		var online_plank = document.createElement('div');
-		online_plank.id = 'online_'+profile.id;
-		online_plank.className = 'online_plank'+(odd?' odd':'');
-		online_plank.name = 'chat_online';
-		
-		var online_author_div = document.createElement('div');
-		online_author_div.id = 'online_author_div'+profile.id;
-		online_author_div.className = 'online_author_div';
-		online_plank.appendChild(online_author_div);
-		online_author_div.innerHTML = chat.draw_user(profile.id)
-		chat.chat_online_window.appendChild(online_plank);
-	},
-	on_after_get : function(data){
-		if(data && data['success']){
-			if(data.users){
-				for(var i in data.users){
-					chat.users[i] = data.users[i];
-				}
-			}
-			if(data.online_users){
-				chat.online_users = {};
-				for(var i in data.online_users){
-					chat.online_users[i] = data.online_users[i];
-				}
-				chat.refresh_onliners();
-			}
-			if(data.messages){
-				for(var i in data.messages){
-					if(!chat.messages[data.messages[i].id]){
-						// new message
-						chat.messages[data.messages[i].id] = data.messages[i];
-						chat.draw_message(data.messages[i]);
-						chat.last_message_received_id = Math.max(chat.last_message_received_id, data.messages[i].id)
-						chat.last_message_received_time = Math.max(chat.last_message_received_time, data.messages[i].time)
-						chat.show_last_messages();
-					}
-				}
-				$('abbr.timeago').timeago();
-			}
-			if(data.last_message_id>-1){
-				chat.last_message_received_id = data.last_message_id;
-			}
-			if(data.refresh){
-				chat.init(chat.divElement.id)
-			}	
-		}
-		chat.status = chat.status_wait;
-	},
-	// after send request to server
-	on_after_send : function(data){
-		chat.status = chat.status_wait;
-		chat.last_message_received_id = data.last_message_id;
-		chat.on_after_get(data);
-		chat.chat_input.disabled = '';
-		chat.show_last_messages();
-	},
-	draw_user: function(id){
-		//chat.users[id].nickname
-		if(chat.users[id])
-		return '<img onclick="chat.write_private('+chat.users[id].id+')" alt="написать приватное сообщение для '+chat.users[id].nickname+'" title="написать приватное сообщение для '+chat.users[id].nickname+'" src="'+chat.users[id].picture+'"></img>';
-	},
-	// inserting message div by message object into chat window
-	draw_message : function(message){
-		chat.messages_count++;
-		if(!chat.chat_messages_window){
-			chat.chat_messages_window = document.createElement('DIV');
-			chat.chat_messages_window.id = 'chat_messages_window';
-			chat.divElement.appendChild(chat.chat_messages_window);
-		}
-		var odd = 0;
-		if(chat.messages_count % 2 == 0) odd =1;
-		var message_plank = document.createElement('div');
-		message_plank.id = 'message_'+message.id;
-		message_plank.className = 'message_plank'+(odd?' odd':'');
-		if(message.is_private > 0){
-			if(message.is_private == chat.authId){
-				message_plank.className = message_plank.className+' private_to_me';
-			}else{
-				message_plank.className = message_plank.className+' private_from_me';
-			}
-			
-		}
-		
-		message_plank.name = 'chat_message';
-		
-		var message_time_div = document.createElement('div');
-		message_time_div.id = 'message_time_div'+message.id;
-		message_time_div.className = 'message_time_div';
-		message_plank.appendChild(message_time_div);
-		var _time ='<abbr class="timeago" title="'+message.date_time+'">'+message.date_time+'</abbr>';
-		message_time_div.innerHTML = _time + '<br clear="all"/><div class="chat_nickname">' + chat.users[message.id_user].nickname + '</div>';
-		
-		
-		var message_author_div = document.createElement('div');
-		message_author_div.id = 'message_author_div'+message.id;
-		message_author_div.className = 'message_author_div';
-		message_plank.appendChild(message_author_div);
-		message_author_div.innerHTML = chat.draw_user(message.id_user)
-		
-		var message_text_div = document.createElement('div');
-		message_text_div.id = 'message_text_div'+message.id;
-		message_text_div.className = 'message_text_div';
-		message_plank.appendChild(message_text_div);
-		message_text_div.innerHTML = message.message;
-		message_plank.innerHTML += '<div class="chat_clear" />';
-		// find place
-		chat.chat_messages_window.appendChild(message_plank);
-	},
-	// getting browser's Cookie
-	getCookie : function (c_name){
-		var i,x,y,ARRcookies=document.cookie.split(";");
-		for (i=0 ; i<ARRcookies.length; i++){
-			x = ARRcookies[i].substr(0 , ARRcookies[i].indexOf("="));
-			y = ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-			x = x.replace(/^\s+|\s+$/g , "");
-			if (x == c_name)
-				return unescape(y);
-		}
-		return false;
-	},
-	// making request
-	request : function(data , callback){
-		callback = callback ? callback : function(data){};
-		data.jquery = 'chat_module';
-
-		var request = $.ajax({
-			cache: false,
-			url: chat.server_url,
-			type: "POST",
-			data: data,
-			timeout: 10000,
-			dataType: "json",
-			global: false
-		});
-
-		request.done(function(data){
-			// request done
-			callback(data);
-		});
-		request.fail(function(o , status){
-			// we will try another time
-			chat.status = chat.status_wait;
-		});
+},
+on_authorize : function(data){
+	if(data && data.success){
+		// authorized, so we can wrote
+		chat.profile = data.profile;
+		chat.set_authorized(true);
+	}else
+		chat.set_authorized(false);
+	chat.start_timer();
+},
+start_timer : function(){
+	chat.on_timer();
+	chat.timer_v = setInterval('chat.on_timer()',chat.refreshSpeed*1000);
+},
+on_timer: function(){
+	// if it's no pending get requests
+	// put new request
+	if(chat.status == chat.status_wait){
+		chat.requestNumber++;
+		// we can sent request to fetch data
+		chat.get(chat.requestNumber % chat.getOnlinersAfter == 0);
 	}
+},
+send : function(){
+	chat.status = chat.status_request_sended_message;
+	var data = {};
+	data.action = 'say';
+	data.message = document.getElementById('chat_input').value;
+	data.last_message_received_id = chat.last_message_received_id;
+	data.last_message_received_time = chat.last_message_received_time;
+	// message not empty & we are authorized to write
+	if(data.message && chat.can_write){
+		chat.chat_input.disabled = 'disabled';
+		chat.request(data, chat.on_after_send);
+	}
+	chat.chat_input.value = '';
+},
+// request for get messages
+get : function(get_onliners){
+	var data = {};
+	data.action = 'fetch';
+	data.get_onliners = get_onliners? 1 : 0;
+	data.last_message_received_id = chat.last_message_received_id;
+	data.last_message_received_time = chat.last_message_received_time;
+	chat.status = chat.status_request_sended_fetch;
+	chat.request(data, chat.on_after_get);
+},
+show_last_messages : function(){
+	chat.chat_messages_window.scrollTop = chat.chat_messages_window.scrollHeight;	
+},
+refresh_onliners : function(){
+	chat.online_users_count = 0;
+	if(chat.chat_online_window)
+		chat.chat_online_window.innerHTML = '';
+	for(var i in chat.online_users){
+		chat.online_users_count++;
+		chat.draw_online_user(chat.online_users[i]);
+	}
+},
+draw_online_user : function(profile){
+	chat.messages_count++;
+	if(!chat.chat_online_window){
+		chat.chat_online_window = document.createElement('DIV');
+		chat.chat_online_window.id = 'chat_online_window';
+		chat.divElement.appendChild(chat.chat_online_window);
+	}
+	var odd = 0;
+	if(chat.online_users_count % 2 == 0) odd =1;
+	var online_plank = document.createElement('div');
+	online_plank.id = 'online_'+profile.id;
+	online_plank.className = 'online_plank'+(odd?' odd':'');
+	online_plank.name = 'chat_online';
+		
+	var online_author_div = document.createElement('div');
+	online_author_div.id = 'online_author_div'+profile.id;
+	online_author_div.className = 'online_author_div';
+	online_plank.appendChild(online_author_div);
+	online_author_div.innerHTML = chat.draw_user(profile.id)
+	chat.chat_online_window.appendChild(online_plank);
+},
+on_after_get : function(data){
+	if(data && data['success']){
+		if(data.users){
+			for(var i in data.users){
+				chat.users[i] = data.users[i];
+			}
+		}
+		if(data.online_users){
+			chat.online_users = {};
+			for(var i in data.online_users){
+				chat.online_users[i] = data.online_users[i];
+			}
+			chat.refresh_onliners();
+		}
+		if(data.messages){
+			for(var i in data.messages){
+				if(!chat.messages[data.messages[i].id]){
+					// new message
+					chat.messages[data.messages[i].id] = data.messages[i];
+					chat.draw_message(data.messages[i]);
+					chat.last_message_received_id = Math.max(chat.last_message_received_id, data.messages[i].id)
+					chat.last_message_received_time = Math.max(chat.last_message_received_time, data.messages[i].time)
+					chat.show_last_messages();
+				}
+			}
+			$('abbr.timeago').timeago();
+		}
+		if(data.last_message_id>-1){
+			chat.last_message_received_id = data.last_message_id;
+		}
+		if(data.refresh){
+			chat.init(chat.divElement.id)
+		}	
+	}
+	chat.status = chat.status_wait;
+},
+// after send request to server
+on_after_send : function(data){
+	chat.status = chat.status_wait;
+	chat.last_message_received_id = data.last_message_id;
+	chat.on_after_get(data);
+	chat.chat_input.disabled = '';
+	chat.show_last_messages();
+},
+draw_user: function(id){
+	//chat.users[id].nickname
+	if(chat.users[id])
+		return '<img onclick="chat.write_private('+chat.users[id].id+')" alt="написать приватное сообщение для '+chat.users[id].nickname+'" title="написать приватное сообщение для '+chat.users[id].nickname+'" src="'+chat.users[id].picture+'"></img>';
+},
+// inserting message div by message object into chat window
+draw_message : function(message){
+	chat.messages_count++;
+	if(!chat.chat_messages_window){
+		chat.chat_messages_window = document.createElement('DIV');
+		chat.chat_messages_window.id = 'chat_messages_window';
+		chat.divElement.appendChild(chat.chat_messages_window);
+	}
+	var odd = 0;
+	if(chat.messages_count % 2 == 0) odd =1;
+	var message_plank = document.createElement('div');
+	message_plank.id = 'message_'+message.id;
+	message_plank.className = 'message_plank'+(odd?' odd':'');
+	if(message.is_private > 0){
+		if(message.is_private == chat.authId){
+			message_plank.className = message_plank.className+' private_to_me';
+		}else{
+			message_plank.className = message_plank.className+' private_from_me';
+		}
+			
+	}
+		
+	message_plank.name = 'chat_message';
+		
+	var message_time_div = document.createElement('div');
+	message_time_div.id = 'message_time_div'+message.id;
+	message_time_div.className = 'message_time_div';
+	message_plank.appendChild(message_time_div);
+	var _time ='<abbr class="timeago" title="'+message.date_time+'">'+message.date_time+'</abbr>';
+	message_time_div.innerHTML = _time + '<br clear="all"/><div class="chat_nickname">' + chat.users[message.id_user].nickname + '</div>';
+		
+		
+	var message_author_div = document.createElement('div');
+	message_author_div.id = 'message_author_div'+message.id;
+	message_author_div.className = 'message_author_div';
+	message_plank.appendChild(message_author_div);
+	message_author_div.innerHTML = chat.draw_user(message.id_user)
+		
+	var message_text_div = document.createElement('div');
+	message_text_div.id = 'message_text_div'+message.id;
+	message_text_div.className = 'message_text_div';
+	message_plank.appendChild(message_text_div);
+	message_text_div.innerHTML = message.message;
+	message_plank.innerHTML += '<div class="chat_clear" />';
+	// find place
+	chat.chat_messages_window.appendChild(message_plank);
+},
+// getting browser's Cookie
+getCookie : function (c_name){
+	var i,x,y,ARRcookies=document.cookie.split(";");
+	for (i=0 ; i<ARRcookies.length; i++){
+		x = ARRcookies[i].substr(0 , ARRcookies[i].indexOf("="));
+		y = ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+		x = x.replace(/^\s+|\s+$/g , "");
+		if (x == c_name)
+			return unescape(y);
+	}
+	return false;
+},
+// making request
+request : function(data , callback){
+	callback = callback ? callback : function(data){};
+	data.jquery = 'chat_module';
+
+	var request = $.ajax({
+		cache: false,
+		url: chat.server_url,
+		type: "POST",
+		data: data,
+		timeout: 10000,
+		dataType: "json",
+		global: false
+	});
+
+	request.done(function(data){
+		// request done
+		callback(data);
+	});
+	request.fail(function(o , status){
+		// we will try another time
+		chat.status = chat.status_wait;
+	});
+}
 }

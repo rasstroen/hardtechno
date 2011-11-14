@@ -127,13 +127,13 @@ class Jchat_module extends JBaseModule {
 			// if id < requested last message
 			if ($from_id && ($id <= $from_id))
 				unset($messages[$id]);
-			$uids[$message['id_user']] = $message['id_user'];
 		}
 		$out['messages'] = array_slice($messages, -$this->max_messages);
 		uasort($out['messages'], 'sort_by_id');
 		foreach ($out['messages'] as $m) {
 			if ($m['is_private'] == 0 || ($m['is_private'] == $current_user->id) || ($m['id_user'] == $current_user->id)) {
 				$out['real_messages'][$m['time']] = $m;
+				$uids[$m['id_user']] = $m['id_user'];
 			}
 		}
 		if (isset($out['real_messages']))
