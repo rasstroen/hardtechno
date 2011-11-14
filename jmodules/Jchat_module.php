@@ -11,10 +11,14 @@ function sort_by_id($a, $b) {
 class Jchat_module extends JBaseModule {
 
 	public $max_messages = 100;
+	public $onlineInterval = 300;
 
 	function process() {
 		global $current_user;
 		$current_user = new CurrentUser();
+		if ($current_user->authorized) {
+			$this->setOnlineUser($current_user->id);
+		}
 		$this->data['success'] = 1;
 		switch ($_POST['action']) {
 			case 'authorize':
@@ -63,7 +67,8 @@ class Jchat_module extends JBaseModule {
 
 		// if admin executes a command
 		if ($current_user->getRole() >= User::ROLE_SITE_ADMIN && $r = $this->doAdminFunction($message)) {
-			$lid = 0;
+			$lid = max(0, (int) $_POST['last_message_received_id']);
+			;
 		} else {
 			$query = 'INSERT INTO `hard_chat` SET
                         `id_user`=' . $current_user->id . ',
@@ -111,7 +116,27 @@ class Jchat_module extends JBaseModule {
 		$last_received_id = max(0, (int) $_POST['last_message_received_id']);
 		$last_received_time = max(0, (int) $_POST['last_message_received_time']);
 		$this->data = $this->getMessages($last_received_id, $current_user->id);
+
+		if (isset($_POST['get_onliners'])) {
+			$get_onliners = max(0, (int) $_POST['get_onliners']);
+			if ($get_onliners) {
+				$this->data['online_users'] = $this->getChatOnlineUsers();
+			}
+		}
 		$this->data['success'] = 1;
+	}
+
+	function setOnlineUser($uid) {
+		$xcachename = 'chat_online_users';
+		$uids = Cache::get($xcachename);
+		$uids[$uid] = $uid;
+		Cache::set($xcachename, $uids, $this->onlineInterval);
+	}
+
+	function getChatOnlineUsers() {
+		$xcachename = 'chat_online_users';
+		$uids = Cache::get($xcachename);
+		return $this->getMessagesUsers($uids);
 	}
 
 	function auth() {

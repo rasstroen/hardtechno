@@ -102,3 +102,31 @@ body{
         color: #100;
         font-family: arial, tahoma;
 }
+
+#chat #chat_online_window{
+	position: absolute;
+	top : 0px;
+	right: 0px;
+	width:160px;
+	height:280px;
+	overflow: auto;
+	background: #faafaa;
+}
+
+.online_author_div{
+        float:left;
+        width: 30px;
+        height:30px;
+        overflow: hidden;
+        text-align: center;
+        vertical-align: middle;
+        padding-right: 3px;
+}
+
+.online_author_div img{
+	margin:4px;
+        max-height: 30px;
+        max-width: 30px;
+        width:100%;
+	cursor: pointer;
+}

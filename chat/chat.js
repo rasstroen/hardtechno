@@ -12,7 +12,7 @@ var chat = {
 	// cookie name with user id
 	authCookieIdName:'thardid_',
 	// chat refresh interval in seconds
-	refreshSpeed: 0.8,
+	refreshSpeed: 4.8,
 	// translates
 	translate_say : 'написать',
 	// variables
@@ -25,6 +25,10 @@ var chat = {
 	chat_messages_window : false,
 	// chat status
 	status : 1,
+	// how many times we asked server for messages list
+	requestNumber : 0,
+	// after getOnlinersAfter request we refresh online users
+	getOnlinersAfter : 1,
 	// statuses
 	status_wait : 1, // do nothing
 	status_request_sended_fetch : 2, // sent request fo fetch new data
@@ -35,10 +39,14 @@ var chat = {
 	last_message_received_time : 0,
 	// messages
 	messages : {},
-        // count
-        messages_count : 0,
+	// count
+	messages_count : 0,
 	// users
 	users : {},
+	// online users
+	online_users : {},
+	//
+	online_users_count : 0,
 	// element on page for draw chat
 	divElement:false,
 	// container for message input & button
@@ -57,16 +65,18 @@ var chat = {
 	init : function(id){
 		chat.divElement = document.getElementById(id);
 		chat.divElement.innerHTML = '';
-		chat.messages = {};
+		chat.chat_messages_window = false;
 		chat.profile = {};
 		chat.status = 1;
+		chat.online_users_count = 0;
 		if(chat.timer_v)
 			clearInterval(chat.timer_v);
-		chat.last_message_received_id = 0;
-		chat.last_message_received_time = 0;
 		chat.authCookie = chat.getCookie(chat.authCookieName);
 		chat.authId = chat.getCookie(chat.authCookieIdName);
 		chat.authorize();
+		chat.messages = {};
+		chat.last_message_received_id = 0;
+		chat.last_message_received_time = 0;
 	},
 	// authorize user via server
 	authorize : function(){
@@ -89,6 +99,19 @@ var chat = {
 		if(keynum == 13){
 			chat.send();
 		}
+	},
+	write_private : function(id){
+		var tmp = 's';
+		if(chat.online_users[id]){
+			tmp = '/to '+chat.online_users[id].nickname.toString() +' '+ chat.chat_input.value;
+		}else
+		if(chat.users[id]){
+			tmp = '/to '+chat.users[id].nickname.toString() +' '+chat.chat_input.value;
+		}else
+			tmp = '/to '+id.toString() +' '+ chat.chat_input.value;
+		chat.chat_input.value = tmp;
+		chat.chat_input.focus();
+		
 	},
 	drawInput : function(){
 		chat.send_plank_div = document.createElement('DIV');
@@ -141,8 +164,9 @@ var chat = {
 		// if it's no pending get requests
 		// put new request
 		if(chat.status == chat.status_wait){
+			chat.requestNumber++;
 			// we can sent request to fetch data
-			chat.get();
+			chat.get(chat.requestNumber % chat.getOnlinersAfter == 0);
 		}
 	},
 	send : function(){
@@ -150,6 +174,8 @@ var chat = {
 		var data = {};
 		data.action = 'say';
 		data.message = document.getElementById('chat_input').value;
+		data.last_message_received_id = chat.last_message_received_id;
+		data.last_message_received_time = chat.last_message_received_time;
 		// message not empty & we are authorized to write
 		if(data.message && chat.can_write){
 			chat.chat_input.disabled = 'disabled';
@@ -158,9 +184,10 @@ var chat = {
 		chat.chat_input.value = '';
 	},
 	// request for get messages
-	get : function(){
+	get : function(get_onliners){
 		var data = {};
 		data.action = 'fetch';
+		data.get_onliners = get_onliners? 1 : 0;
 		data.last_message_received_id = chat.last_message_received_id;
 		data.last_message_received_time = chat.last_message_received_time;
 		chat.status = chat.status_request_sended_fetch;
@@ -169,12 +196,48 @@ var chat = {
 	show_last_messages : function(){
 		chat.chat_messages_window.scrollTop = chat.chat_messages_window.scrollHeight;	
 	},
+	refresh_onliners : function(){
+		chat.online_users_count = 0;
+		for(var i in chat.online_users){
+			chat.online_users_count++;
+			chat.draw_online_user(chat.online_users[i]);
+		}
+	},
+	draw_online_user : function(profile){
+		chat.messages_count++;
+		if(!chat.chat_online_window){
+			chat.chat_online_window = document.createElement('DIV');
+			chat.chat_online_window.id = 'chat_online_window';
+			chat.divElement.appendChild(chat.chat_online_window);
+		}
+		chat.chat_online_window.innerHTML = '';
+		var odd = 0;
+		if(chat.online_users_count % 2 == 0) odd =1;
+		var online_plank = document.createElement('div');
+		online_plank.id = 'online_'+profile.id;
+		online_plank.className = 'online_plank'+(odd?' odd':'');
+		online_plank.name = 'chat_online';
+		
+		var online_author_div = document.createElement('div');
+		online_author_div.id = 'online_author_div'+profile.id;
+		online_author_div.className = 'online_author_div';
+		online_plank.appendChild(online_author_div);
+		online_author_div.innerHTML = chat.draw_user(profile.id)
+		chat.chat_online_window.appendChild(online_plank);
+	},
 	on_after_get : function(data){
 		if(data && data['success']){
 			if(data.users){
 				for(var i in data.users){
 					chat.users[i] = data.users[i];
 				}
+			}
+			if(data.online_users){
+				chat.online_users = {};
+				for(var i in data.online_users){
+					chat.online_users[i] = data.online_users[i];
+				}
+				chat.refresh_onliners();
 			}
 			if(data.messages){
 				for(var i in data.messages){
@@ -187,14 +250,14 @@ var chat = {
 						chat.show_last_messages();
 					}
 				}
-                                $('abbr.timeago').timeago();
+				$('abbr.timeago').timeago();
+			}
+			if(data.last_message_id>-1){
+				chat.last_message_received_id = data.last_message_id;
 			}
 			if(data.refresh){
 				chat.init(chat.divElement.id)
 			}	
-			if(data.last_message_id>-1){
-				chat.last_message_received_id = data.last_message_id;
-			}
 		}
 		chat.status = chat.status_wait;
 	},
@@ -208,18 +271,18 @@ var chat = {
 	},
 	draw_user: function(id){
 		//chat.users[id].nickname
-		return '<img src="'+chat.users[id].picture+'"></img>';
+		return '<img onclick="chat.write_private('+chat.users[id].id+')" alt="'+chat.users[id].nickname+'" title="'+chat.users[id].nickname+'" src="'+chat.users[id].picture+'"></img>';
 	},
 	// inserting message div by message object into chat window
 	draw_message : function(message){
-                chat.messages_count++;
+		chat.messages_count++;
 		if(!chat.chat_messages_window){
 			chat.chat_messages_window = document.createElement('DIV');
 			chat.chat_messages_window.id = 'chat_messages_window';
 			chat.divElement.appendChild(chat.chat_messages_window);
 		}
-                var odd = 0;
-                if(chat.messages_count % 2 == 0) odd =1;
+		var odd = 0;
+		if(chat.messages_count % 2 == 0) odd =1;
 		var message_plank = document.createElement('div');
 		message_plank.id = 'message_'+message.id;
 		message_plank.className = 'message_plank'+(odd?' odd':'');
@@ -229,7 +292,7 @@ var chat = {
 		message_time_div.id = 'message_time_div'+message.id;
 		message_time_div.className = 'message_time_div';
 		message_plank.appendChild(message_time_div);
-                var _time ='<abbr class="timeago" title="'+message.date_time+'">'+message.date_time+'</abbr>';
+		var _time ='<abbr class="timeago" title="'+message.date_time+'">'+message.date_time+'</abbr>';
 		message_time_div.innerHTML = _time + '<br clear="all"/><div class="chat_nickname">' + chat.users[message.id_user].nickname + '</div>';
 		
 		
@@ -238,16 +301,13 @@ var chat = {
 		message_author_div.className = 'message_author_div';
 		message_plank.appendChild(message_author_div);
 		message_author_div.innerHTML = chat.draw_user(message.id_user)
-
-
-                
 		
 		var message_text_div = document.createElement('div');
 		message_text_div.id = 'message_text_div'+message.id;
 		message_text_div.className = 'message_text_div';
 		message_plank.appendChild(message_text_div);
 		message_text_div.innerHTML = message.message;
-                message_plank.innerHTML += '<div class="chat_clear" />';
+		message_plank.innerHTML += '<div class="chat_clear" />';
 		// find place
 		chat.chat_messages_window.appendChild(message_plank);
 	},
