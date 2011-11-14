@@ -56,6 +56,15 @@ body{
         background: #fff;
 }
 
+#chat #chat_messages_window .message_plank.private_to_me{
+        background: #ffe0e0;
+}
+#chat #chat_messages_window .message_plank.private_from_me{
+        background: #e0ffe0;
+}
+
+
+
 .chat_clear{
         display: block;
         height:1px;

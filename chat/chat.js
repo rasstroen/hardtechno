@@ -199,7 +199,7 @@ var chat = {
 	refresh_onliners : function(){
 		chat.online_users_count = 0;
 		if(chat.chat_online_window)
-		chat.chat_online_window.innerHTML = '';
+			chat.chat_online_window.innerHTML = '';
 		for(var i in chat.online_users){
 			chat.online_users_count++;
 			chat.draw_online_user(chat.online_users[i]);
@@ -287,6 +287,15 @@ var chat = {
 		var message_plank = document.createElement('div');
 		message_plank.id = 'message_'+message.id;
 		message_plank.className = 'message_plank'+(odd?' odd':'');
+		if(message.is_private > 0){
+			if(message.is_private == chat.authId){
+				message_plank.className = message_plank.className+' private_to_me';
+			}else{
+				message_plank.className = message_plank.className+' private_from_me';
+			}
+			
+		}
+		
 		message_plank.name = 'chat_message';
 		
 		var message_time_div = document.createElement('div');

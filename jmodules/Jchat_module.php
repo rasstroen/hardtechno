@@ -48,6 +48,29 @@ class Jchat_module extends JBaseModule {
 		}
 	}
 
+	function doUserFunction($message) {
+		$message = explode(' ', $message);
+		$push = true; // message will be in messages
+		$private = 0; // is private?
+		switch ($message[0]) {
+			case '/to':
+				if (isset($message[1])) {
+					$private_user = new User($message[1]);
+					try {
+						$private_user->load();
+						$private = $private_user->id;
+					} catch (Exception $e) {
+						// no user, sorry
+					}
+					unset($message[0]);
+					unset($message[1]);
+				}
+				break;
+		}
+		$message = implode(' ', $message);
+		return array($push, $message, $private);
+	}
+
 	function error($s) {
 		$this->data['error'] = $s;
 		$this->data['success'] = 0;
@@ -65,18 +88,22 @@ class Jchat_module extends JBaseModule {
 			$this->error('illegal message');
 		}
 
+		list($push, $message, $private) = $message = $this->doUserFunction($message);
+
 		// if admin executes a command
 		if ($current_user->getRole() >= User::ROLE_SITE_ADMIN && $r = $this->doAdminFunction($message)) {
 			$lid = max(0, (int) $_POST['last_message_received_id']);
-			;
 		} else {
-			$query = 'INSERT INTO `hard_chat` SET
+			if ($push) {
+				$query = 'INSERT INTO `hard_chat` SET
                         `id_user`=' . $current_user->id . ',
+			`is_private`=' . $private . ',
                         `message`=' . Database::escape($message) . ',
                         `time`=' . time();
-			Database::query($query);
-			$lid = Database::lastInsertId();
-			$this->data = $this->getMessages($lid - 1, $current_user->id);
+				Database::query($query);
+				$lid = Database::lastInsertId();
+				$this->data = $this->getMessages($lid - 1, $current_user->id);
+			}
 		}
 		$this->data['last_message_id'] = $lid;
 		$this->data['success'] = 1;
@@ -84,6 +111,8 @@ class Jchat_module extends JBaseModule {
 	}
 
 	function getMessages($from_id, $uid) {
+		global $current_user;
+		/* @var $current_user CurrentUser */
 		$out = array();
 		$messages = Database::sql2array('SELECT * FROM `hard_chat` ORDER BY `id` DESC LIMIT ' . $this->max_messages, 'id');
 		foreach ($messages as &$m) {
@@ -99,7 +128,9 @@ class Jchat_module extends JBaseModule {
 		$out['messages'] = array_slice($messages, -$this->max_messages);
 		uasort($out['messages'], 'sort_by_id');
 		foreach ($out['messages'] as $m) {
-			$out['real_messages'][$m['time']] = $m;
+			if ($m['is_private'] == 0 || $m['is_private'] == $current_user->id || $m['id_user'] == $current_user->id) {
+				$out['real_messages'][$m['time']] = $m;
+			}
 		}
 		if (isset($out['real_messages']))
 			$out['messages'] = $out['real_messages'];
