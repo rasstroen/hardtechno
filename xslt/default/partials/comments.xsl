@@ -43,7 +43,7 @@
 				<div class="comment_time">
 					<xsl:value-of select="$item/@date" />
 				</div>
-				<a onfocus="this.blur()" href="user/{$module/users/item[@id = $item/@id_author]/@path}">
+				<a onfocus="this.blur()" href="{$module/users/item[@id = $item/@id_author]/@path}">
 					<div class="comment_nick">
 						<xsl:value-of select="$module/users/item[@id = $item/@id_author]/@nickname" />
 					</div>

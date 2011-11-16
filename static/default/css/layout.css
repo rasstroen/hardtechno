@@ -30,7 +30,7 @@ a {color:red;text-decoration:none;}
 	background: #000;
 }
 /* Fonts */
-.l-body {font:80% Arial,Verdana,Tahoma,sans-serif}
+.l-body {font:80% Georgia,serif,Arial,Verdana,Tahoma,sans-serif}
 .l-body h1 {font-size:200%; margin-bottom:.5em}
 .l-body h2 {font-size:150%; margin-bottom:.5em}
 .l-body h3 {font-size:120%; margin-bottom:.3em}

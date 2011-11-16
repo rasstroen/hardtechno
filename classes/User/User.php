@@ -168,7 +168,10 @@ class User {
 
 	public function getNickName() {
 		$this->load();
-		return $this->getProperty('nick');
+		if ($this->getProperty('nick'))
+			return $this->getProperty('nick');
+		$email = $this->getProperty('email');
+		return substr($email, 1, strpos($email, '@'));
 	}
 
 	public function getAvatar() {
