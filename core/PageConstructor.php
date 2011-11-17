@@ -13,7 +13,6 @@ class PageConstructor {
 	private $pageSettings;
 	private $xsltFileName = '';
 	private $xsltFiles = array();
-	
 	private $modules;
 
 	public static function parseParams($type, $n) {
@@ -76,12 +75,15 @@ class PageConstructor {
 		}
 	}
 
-
 	public function process() {
 		global $current_user;
 		/* @var $current_user CurrentUser */
 		XMLClass::$pageNode = XMLClass::createNodeFromObject(array(), false, 'page', false);
 		XMLClass::appendNode(XMLClass::$pageNode, '');
+		
+		XMLClass::$accessNode = XMLClass::createNodeFromObject(AccessRules::getRules(), false, 'access', true);
+		XMLClass::appendNode(XMLClass::$accessNode, '');
+		
 		XMLClass::$pageNode->setAttribute('current_url', Request::$url);
 		XMLClass::$pageNode->setAttribute('prefix', Config::need('www_path') . '/');
 		XMLClass::$varNode = XMLClass::$xml->createElement('variables');
@@ -105,7 +107,7 @@ class PageConstructor {
 		foreach ($this->modules as $module) {
 			$this->processModule($module['name'], $module);
 		}
-		
+
 		if ($pageTitle = StructureParser::getTitle()) {
 			$this->buildPageTitle($pageTitle);
 		}
@@ -168,6 +170,9 @@ class PageConstructor {
 						$t = Database::sql2single('SELECT name FROM `term_data` WHERE `tid`=' . (int) $val);
 					return $t;
 					break;
+				case 'post-subject':
+					return Request::pass('post-subject');
+					break;
 				case 'theme-title':
 					return Request::pass('theme-title');
 					break;
@@ -179,7 +184,8 @@ class PageConstructor {
 					return $t;
 					break;
 				case 'shelf-name':
-					if($val == 'loved') return 'Любимые книги';
+					if ($val == 'loved')
+						return 'Любимые книги';
 					return isset(Config::$shelves[Config::$shelfIdByNames[$val]]) ? Config::$shelves[Config::$shelfIdByNames[$val]] : $val;
 					break;
 				case 'magazine-title':

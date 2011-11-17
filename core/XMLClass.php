@@ -5,7 +5,8 @@ class XMLClass {
 	public static $xml; // собственно весь xml
 	public static $rootNode; // рутовая нода
 	public static $pageNode; // нода страницы
-	public static $varNode; // нода страницы
+	public static $varNode; // нода переменных
+	public static $accessNode; // нода переменных
 	public static $CurrentUserNode; // нода текущего юзера
 	private static $initialized = false;
 

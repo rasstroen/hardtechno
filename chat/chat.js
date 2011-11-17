@@ -12,7 +12,7 @@ var chat = {
 	// cookie name with user id
 	authCookieIdName:'thardid_',
 	// chat refresh interval in seconds
-	refreshSpeed: 1,
+	refreshSpeed: 5,
 	// translates
 	translate_say : 'написать',
 	// variables
@@ -124,12 +124,12 @@ var chat = {
 	write_private : function(id){
 		var tmp = 's';
 		if(chat.online_users[id]){
-			tmp = '/to '+chat.online_users[id].nickname.toString() +' '+ chat.chat_input.value;
+			tmp = '/to '+chat.online_users[id].nickname.toString() +': '+ chat.chat_input.value;
 		}else
 		if(chat.users[id]){
-			tmp = '/to '+chat.users[id].nickname.toString() +' '+chat.chat_input.value;
+			tmp = '/to '+chat.users[id].nickname.toString() +': '+chat.chat_input.value;
 		}else
-			tmp = '/to '+id.toString() +' '+ chat.chat_input.value;
+			tmp = '/to '+id.toString() +': '+ chat.chat_input.value;
 		chat.chat_input.value = tmp;
 		chat.chat_input.focus();
 		
@@ -340,6 +340,17 @@ var chat = {
 		message_author_div.className = 'message_author_div';
 		message_plank.appendChild(message_author_div);
 		message_author_div.innerHTML = chat.draw_user(message.id_user)
+		
+		if(message.is_private > 0){
+			var pmessage_author_div = document.createElement('div');
+			pmessage_author_div.id = 'pmessage_author_div'+message.id;
+			pmessage_author_div.className = 'pmessage_author_div';
+			if(message.is_private == chat.authId)
+				pmessage_author_div.className += ' forme';
+			message_plank.appendChild(pmessage_author_div);
+			pmessage_author_div.innerHTML = chat.draw_user(message.is_private)
+		}
+		
 		
 		var message_text_div = document.createElement('div');
 		message_text_div.id = 'message_text_div'+message.id;

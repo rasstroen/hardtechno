@@ -54,16 +54,21 @@ class Jchat_module extends JBaseModule {
 		$private = 0; // is private?
 		switch ($message[0]) {
 			case '/to':
-				if (isset($message[1])) {
-					$private_user = new User($message[1]);
+				$name = str_replace('/to', '', implode(' ',$message));
+				$name = explode(':' , $name);
+				$name = trim($name[0]);
+				
+				if ($name) {
+					$private_user = new User($name);
 					try {
 						$private_user->load();
 						$private = $private_user->id;
 					} catch (Exception $e) {
 						// no user, sorry
 					}
-					unset($message[0]);
-					unset($message[1]);
+					$message = str_replace('/to', '', implode(' ',$message));
+					$message = str_replace($name.':', '', $message);
+					$message = explode(' ', $message);
 				}
 				break;
 		}

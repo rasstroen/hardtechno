@@ -19,12 +19,16 @@ class Error {
 	const E_USER_NOT_FOUND = 404;
 	const E_WRONG_ROLE = 502;
 
-	public static function CheckThrowAuth($needRole = 1) {
+	public static function CheckThrowAuth($needRole = false) {
 		global $current_user;
-		$needRoleName = Users::$rolenames[$needRole];
 		$haveRoleName = Users::$rolenames[$current_user->getRole()];
-		if ($current_user->getRole() < $needRole) {
-			throw new Exception('Вы — ' . $haveRoleName . ', а должны быть не ниже, чем ' . $needRoleName . ', чтобы посетить эту страницу', 403);
+		if ($needRole === false) {
+			throw new Exception('Вы должны иметь роль выше, чем ' . $haveRoleName . ', чтобы выполнять это действие', 403);
+		} else {
+			$needRoleName = Users::$rolenames[$needRole];
+			if ($current_user->getRole() < $needRole) {
+				throw new Exception('Вы — ' . $haveRoleName . ', а должны быть не ниже, чем ' . $needRoleName . ', чтобы выполнять это действие', 403);
+			}
 		}
 	}
 

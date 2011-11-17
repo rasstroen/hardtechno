@@ -73,7 +73,7 @@ class StructureParser {
 		if ($exists) {
 			return $tmp_name;
 		}
-		$concat_static_enabled = Config::need('concat_static' , false);
+		$concat_static_enabled = Config::need('concat_static', false);
 		// склеиваем файлы в один
 		$filename = Config::need('static_path') . '/default/' . $ext . '/transform/' . $tmp_name . '.' . $ext;
 		$full_data = '';
@@ -84,12 +84,12 @@ class StructureParser {
 			if (file_exists($fn))
 				$full_data.="\n\n" . file_get_contents($fn);
 		}
-	if ($full_data) {
+		if ($full_data) {
 			file_put_contents($filename, $full_data);
 			Cache::set('partfile_' . $tmp_name . '.' . $ext, time(), self::$partials_cache_time);
+			return $tmp_name;
 		}
-		Cache::set('partfile_' . $tmp_name . '.' . $ext, time(), self::$partials_cache_time);
-		return $tmp_name;
+		return false;
 	}
 
 	public static function toXML() {
@@ -108,7 +108,7 @@ class StructureParser {
 
 		$node->appendChild($data);
 		$node->appendChild($blocks);
-		$concat_static_enabled = Config::need('concat_static' , false);
+		$concat_static_enabled = Config::need('concat_static', false);
 		foreach (self::$data as $field => $value) {
 			switch ($field) {
 				case 'title':
@@ -122,12 +122,13 @@ class StructureParser {
 					$additional_js = array();
 					foreach ($value as $item) {
 						$tmpname.=implode('|', $item);
-						if (!$concat_static_enabled || ($item['path'] == 'tiny_mce/tiny_mce')){
+						if (!$concat_static_enabled || ($item['path'] == 'tiny_mce/tiny_mce')) {
 							$additional_js[] = $item;
 						}
 					}
-					self::createFileFromPartials($value, md5($tmpname), $field == 'stylesheet' ? 'css' : 'js');
+					$r = self::createFileFromPartials($value, md5($tmpname), $field == 'stylesheet' ? 'css' : 'js');
 					$value = $additional_js;
+					if($r)
 					$value[] = array('path' => 'transform/' . md5($tmpname));
 
 

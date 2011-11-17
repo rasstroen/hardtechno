@@ -89,6 +89,28 @@ body{
 	cursor: pointer;
 }
 
+#chat #chat_messages_window .message_plank .pmessage_author_div{
+        float:left;
+        width: 56px;
+        height:30px;
+        overflow: hidden;
+        text-align: right;
+        vertical-align: middle;
+        padding-right: 3px;
+	background: url(/static/img/forward.png) center left no-repeat;
+}
+
+#chat #chat_messages_window .message_plank .pmessage_author_div.forme{
+	background: url(/static/img/back.png) center left no-repeat;
+}
+
+#chat #chat_messages_window .message_plank .pmessage_author_div img{
+        max-height: 30px;
+        max-width: 30px;
+        width:100%;
+	cursor: pointer;
+}
+
 #chat #chat_messages_window .message_plank .message_time_div{
         float:left;
         text-align: right;
