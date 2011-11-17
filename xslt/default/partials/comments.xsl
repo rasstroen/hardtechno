@@ -4,9 +4,28 @@
 	<xsl:output doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
 	<xsl:template match="module[@name='comments' and @action='list']" mode="p-module">
+		<xsl:variable name="doc_id" select="comments/@doc_id" />
+		<xsl:if test="&access;/add_comments">
+			<xsl:call-template name="comment_form">
+				<xsl:with-param name="doc_id" select="$doc_id" />
+				<xsl:with-param name="reply_to" select="0" />
+			</xsl:call-template>
+		</xsl:if>
 		<xsl:apply-templates select="comments/item" mode="p-comments-list">
 			<xsl:with-param name="module" select="." />	
 		</xsl:apply-templates>
+	</xsl:template>
+	
+	<xsl:template name="comment_form">
+		<xsl:param name="doc_id" select="0" />
+		<xsl:param name="reply_to" select="0" />
+		<a href="javascript:void(0)" onclick="show_add_comments()">оставить комментарий</a>
+		<div id="comment_form_{$reply_to}">
+			<input type="hidden" value="CommentsWriteModule" name="writemodule" />
+			<input id="reply_to" type="hidden" value="{$reply_to}" name="reply_to" />
+			<input type="hidden" value="{$doc_id}" name="doc_id" />
+			<textarea name="comment"></textarea>
+		</div>
 	</xsl:template>
 	<!-- comments list -->
 	<xsl:template match="*" mode="p-comments-list">

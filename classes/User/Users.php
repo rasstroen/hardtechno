@@ -7,7 +7,7 @@ class Users {
 	    User::ROLE_READER_UNCONFIRMED => 'Неподтвержденный пользователь',
 	    User::ROLE_VANDAL => 'Вандал',
 	    User::ROLE_READER_CONFIRMED => 'Пользователь',
-	    User::ROLE_BIBER => 'Модератор',
+	    User::ROLE_MODERATOR => 'Модератор',
 	    User::ROLE_SITE_ADMIN => 'Администратор сайта',
 	);
 	private static $users = array();

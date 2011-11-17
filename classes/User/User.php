@@ -6,8 +6,7 @@ class User {
 	const ROLE_READER_UNCONFIRMED = 10; // юзер с неподтвержденным мылом
 	const ROLE_VANDAL = 20; // вандал
 	const ROLE_READER_CONFIRMED = 30; // юзер с подтвержденным мылом
-
-	const ROLE_BIBER = 40; // бибер
+	const ROLE_MODERATOR = 40; // бибер
 	const ROLE_SITE_ADMIN = 50; // админ вся руси
 
 	public $id = 0;

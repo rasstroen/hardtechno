@@ -5,54 +5,22 @@ class AccessRules {
 	public static $actions = array(
 	    // false if cant, true if can, role(number) for maximum role for this action to target user
 	    User::ROLE_ANON => array(
-		'books_edit_quality' => false,
-		'books_edit' => false,
-		'books_download' => false,
-		'logs_view' => false,
-		'users_edit' => false,
-		'users_add_friends' => false,
+		'add_comments' => false,
 	    ),
 	    User::ROLE_VANDAL => array(
-		'books_edit_quality' => false,
-		'books_edit' => false,
-		'books_download' => false,
-		'logs_view' => false,
-		'users_edit' => false,
-		'users_add_friends' => false,
+		'add_comments' => false,
 	    ),
 	    User::ROLE_READER_UNCONFIRMED => array(
-		'books_edit_quality' => false,
-		'books_edit' => false,
-		'books_download' => false,
-		'logs_view' => false,
-		'users_edit' => false,
-		'users_add_friends' => false,
+		'add_comments' => true,
 	    ),
 	    User::ROLE_READER_CONFIRMED => array(
-		'books_edit_quality' => false,
-		'books_edit' => true,
-		'books_download' => true,
-		'logs_view' => false,
-		'users_edit' => false,
-		'users_add_friends' => true,
+		'add_comments' => true,
 	    ),
-	    User::ROLE_BIBER => array(
-		'books_edit_quality' => true,
-		'books_edit' => true,
-		'books_download' => true,
-		'logs_view' => true,
-		'users_edit' => User::ROLE_READER_CONFIRMED,
-		'users_make_vandal' => User::ROLE_READER_CONFIRMED,
-		'users_add_friends' => true,
+	    User::ROLE_MODERATOR => array(
+		'add_comments' => true,
 	    ),
 	    User::ROLE_SITE_ADMIN => array(
-		'books_edit_quality' => true,
-		'books_edit' => true,
-		'books_download' => true,
-		'logs_view' => true,
-		'users_edit' => User::ROLE_BIBER,
-		'users_make_vandal' => User::ROLE_BIBER,
-		'users_add_friends' => true,
+		'add_comments' => true,
 	    ),
 	);
 

@@ -9,6 +9,7 @@
 <!ENTITY current_profile "&page;/current_user">
 <!ENTITY current_user "&page;/current_user">
 <!ENTITY role "&page;/current_user/@role">
+<!ENTITY access "/root/access">
 <!ENTITY include_path "&page;/@prefix">
 
 <!--=================== Text Elements ====================================-->
