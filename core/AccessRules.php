@@ -6,21 +6,27 @@ class AccessRules {
 	    // false if cant, true if can, role(number) for maximum role for this action to target user
 	    User::ROLE_ANON => array(
 		'add_comments' => false,
+		'edit_news' => false,
 	    ),
 	    User::ROLE_VANDAL => array(
 		'add_comments' => false,
+		'edit_news' => false,
 	    ),
 	    User::ROLE_READER_UNCONFIRMED => array(
 		'add_comments' => true,
+		'edit_news' => false,
 	    ),
 	    User::ROLE_READER_CONFIRMED => array(
 		'add_comments' => true,
+		'edit_news' => false,
 	    ),
 	    User::ROLE_MODERATOR => array(
 		'add_comments' => true,
+		'edit_news' => false,
 	    ),
 	    User::ROLE_SITE_ADMIN => array(
 		'add_comments' => true,
+		'edit_news' => true,
 	    ),
 	);
 

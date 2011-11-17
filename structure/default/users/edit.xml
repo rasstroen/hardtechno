@@ -2,8 +2,14 @@
 <structure>
 	<data>
 		<layout file="layouts/page.xsl"/>
+		<stylesheet path="jquery-ui-1.8.16.custom"/>
+		<stylesheet path="jquery-ui-timepicker-addon"/>
+		<javascript path="jquery-ui"/>
+		<javascript path="jquery-ui-datepicker-ru"/>
+		<javascript path="profileModule"/>
+		
 		<role need="10"/>
-    <title>Редактирование профиля {profile-nickname:get:1}</title>
+		<title>Редактирование профиля {profile-nickname:get:1}</title>
 	</data>
 	<blocks>
 		<content>
