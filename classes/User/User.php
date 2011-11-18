@@ -43,6 +43,14 @@ class User {
 			$this->load($data);
 	}
 
+	function can($action, $target_user = false) {
+		return AccessRules::can($this, $action, $target_user);
+	}
+	
+	function can_throw($action, $target_user = false) {
+		return AccessRules::can($this, $action, $target_user, $throwError = true);
+	}
+
 	function checkRights($right_name) {
 		switch ($right_name) {
 			// todo for check rights

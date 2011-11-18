@@ -34,6 +34,7 @@ class comments_module extends BaseModule {
 
 		$this->data['users'] = $this->getCommentUsers($user_ids);
 		$this->data['comments']['doc_id'] = $doc_id;
+		$this->data['comments']['table'] = $table;
 	}
 
 	function addCommentsLevel($comments, $parent_id, &$commentsNode, $parents) {

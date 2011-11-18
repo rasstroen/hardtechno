@@ -6,17 +6,21 @@
 	<xsl:template match="module[@name='comments' and @action='list']" mode="p-module">
 		<script>
 		function show_add_comments(id){
-		document.getElementById('comment_form_'+id).style.display = 'block';
+			document.getElementById('comment_form_'+id).style.display = 'block';
 		}
 		</script>
 		<xsl:variable name="doc_id" select="comments/@doc_id" />
+		<xsl:variable name="table" select="comments/@table" />
 		<xsl:apply-templates select="comments/item" mode="p-comments-list">
 			<xsl:with-param name="module" select="." />
+			<xsl:with-param name="table" select="$table" />
+			<xsl:with-param name="doc_id" select="$doc_id" />
 		</xsl:apply-templates>
 		<xsl:if test="&access;/add_comments">
 			<xsl:call-template name="comment_form">
 				<xsl:with-param name="doc_id" select="$doc_id" />
 				<xsl:with-param name="reply_to" select="0" />
+				<xsl:with-param name="table" select="$table" />
 			</xsl:call-template>
 		</xsl:if>
 	</xsl:template>
@@ -24,6 +28,7 @@
 	<xsl:template name="comment_form">
 		<xsl:param name="doc_id" select="0" />
 		<xsl:param name="reply_to" select="0" />
+		<xsl:param name="table" select="0" />
 		<xsl:if test="$reply_to = 0">
 			<a href="javascript:void(0)" onclick="show_add_comments(0)">оставить комментарий</a>
 		</xsl:if>
@@ -31,10 +36,20 @@
 			<a href="javascript:void(0)" onclick="show_add_comments({$reply_to})">ответить</a>
 		</xsl:if>
 		<div style="display:none" class="comment_left" id="comment_form_{$reply_to}">
-			<input type="hidden" value="CommentsWriteModule" name="writemodule" />
-			<input id="reply_to" type="hidden" value="{$reply_to}" name="reply_to" />
-			<input type="hidden" value="{$doc_id}" name="doc_id" />
-			<textarea name="comment"></textarea>
+			<form method="post">
+				<input type="hidden" value="CommentsWriteModule" name="writemodule" />
+				<input id="reply_to" type="hidden" value="{$reply_to}" name="reply_to" />
+				<input id="table" type="hidden" value="{$table}" name="table" />
+				<input type="hidden" value="{$doc_id}" name="doc_id" />
+				<textarea name="comment"></textarea>
+			
+				<xsl:if test="$reply_to = 0">
+					<input type="submit" value="оставить комментарий"/>
+				</xsl:if>
+				<xsl:if test="$reply_to > 0">
+					<input type="submit" value="ответить"/>
+				</xsl:if>
+			</form>
 		</div>
 	</xsl:template>
 	<!-- comments list -->
@@ -49,6 +64,8 @@
 	<xsl:template match="*" mode="p-comments-list">
 		<xsl:param name="level" select="1" />
 		<xsl:param name="module" select="."/>
+		<xsl:param name="table" select="0"/>
+		<xsl:param name="doc_id" select="0"/>
 		<xsl:for-each select=".">
 			<xsl:variable name="item" select="." />
 			<div class="comment_item" id="comment-{@id}" >
@@ -92,8 +109,9 @@
 				</xsl:if>
 				<xsl:if test="&access;/add_comments">
 					<xsl:call-template name="comment_form">
-						<xsl:with-param name="doc_id" select="parent::comments/@doc_id" />
+						<xsl:with-param name="doc_id" select="@doc_id" />
 						<xsl:with-param name="reply_to" select="@id" />
+						<xsl:with-param name="table" select="$table" />
 					</xsl:call-template>
 				</xsl:if>
 				<div class="clear"></div>
@@ -102,6 +120,8 @@
 			<xsl:apply-templates select="item" mode="p-comments-list">
 				<xsl:with-param name="level" select="$level + 1" />
 				<xsl:with-param name="module" select="$module" />
+				<xsl:with-param name="table" select="$table" />
+				<xsl:with-param name="doc_id" select="$doc_id" />
 			</xsl:apply-templates>
 		</xsl:for-each>
 	</xsl:template>

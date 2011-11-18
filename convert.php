@@ -66,7 +66,14 @@
 
 //comments
 	Database::query('TRUNCATE `comments`');
+	Database::query('ALTER TABLE `comments` DROP PRIMARY KEY', false);
 	Database::query('INSERT INTO `comments` (SELECT * FROM `fashist`.`comments`)');
+	// all releases comments comes to releases comments!
+	$query = 'UPDATE  `comments` SET `table`=\'releases\' WHERE `table`=\'news\' AND `doc_id` IN (SELECT `id` FROM `releases`)';
+	Database::query($query);
+	
+	Database::query('ALTER TABLE `hardtechno`.`comments` ADD PRIMARY KEY ( `doc_id` , `table` , `id` ) ');
+	
 // upload
 	exec('rm -rf  /home/test.hardtechno.ru/static/upload/news/*', $o);
 	print_r($o);

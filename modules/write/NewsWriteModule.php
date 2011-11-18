@@ -9,12 +9,7 @@ class NewsWriteModule extends BaseWriteModule {
 
 		$current_user->can_throw('edit_news');
 
-		//
-		//[id] => 445
-		//[title] => СЕГОДНЯ СПИДКОР В "ТЕХНОПОЛИСЕ"!
-		//[anons] => Иностранные гости The Massacre и Bula, организаторы мероприятий, розыгрыш билетов и много информации в сегодняшем прямом эфире радио-шоу "Технополис"!
-		//[html]
-
+	
 		$newsItem = News::getInstance()->getByIdLoaded(Request::post('id'));
 		if ($newsItem) {
 			$this->_edit($newsItem);

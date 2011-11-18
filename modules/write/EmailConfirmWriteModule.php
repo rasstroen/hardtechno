@@ -2,6 +2,7 @@
 
 class EmailConfirmWriteModule extends BaseWriteModule {
 
+	
 	function write() {
 
 		global $current_user;
