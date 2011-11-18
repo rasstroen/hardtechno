@@ -6,7 +6,7 @@
 	<xsl:template match="module[@name='comments' and @action='list']" mode="p-module">
 		<script>
 		function show_add_comments(id){
-			document.getElementById('comment_form_'+id).style.display = 'block';
+			$('#comment_form_'+id).toggle();
 		}
 		</script>
 		<xsl:variable name="doc_id" select="comments/@doc_id" />
