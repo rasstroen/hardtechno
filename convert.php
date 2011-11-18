@@ -67,7 +67,7 @@
 //comments
 	Database::query('TRUNCATE `comments`');
 	Database::query('INSERT INTO `comments` (SELECT * FROM `fashist`.`comments`)');
-
+// upload
 	exec('rm -rf  /home/test.hardtechno.ru/static/upload/news/*', $o);
 	print_r($o);
 	exec('rm -rf  /home/test.hardtechno.ru/static/upload/avatars/*', $o);

@@ -2,7 +2,7 @@
 <structure>
 	<data>
 		<stylesheet path="partials/news"/>
-		<title>Просмотр теста</title>
+			<title>{news-title:get:1}</title>
 		<role need="0"/>
 	</data>
 	<blocks>

@@ -1,12 +1,13 @@
 <?php
 
-class Release extends BaseObjectClass {
+class Blogpost extends BaseObjectClass {
 
 	public $id;
 	public $loaded = false;
 	public $data;
 	public $fieldsMap = array(
 	    'id' => 'int',
+	    'id_user' => 'int',
 	    'date' => 'int',
 	    'update_time' => 'int',
 	    'image' => 'string',
@@ -29,18 +30,18 @@ class Release extends BaseObjectClass {
 	}
 
 	function dropCache() {
-		Releases::getInstance()->dropCache($this->id);
+		Blogposts::getInstance()->dropCache($this->id);
 		$this->loaded = false;
 	}
 
 	function _create($data) {
-		$tableName = Releases::getInstance()->tableName;
+		$tableName = Blogposts::getInstance()->tableName;
 		$this->dropCache();
 		return parent::_create($data, $tableName);
 	}
 
 	function _update($data) {
-		$tableName = Releases::getInstance()->tableName;
+		$tableName = Blogposts::getInstance()->tableName;
 		$this->dropCache();
 		return parent::_update($data, $tableName);
 	}
@@ -49,7 +50,7 @@ class Release extends BaseObjectClass {
 		if ($this->loaded)
 			return false;
 		if (!$data) {
-			$query = 'SELECT * FROM `releases` WHERE `id`=' . $this->id;
+			$query = 'SELECT * FROM `blogpost` WHERE `id`=' . $this->id;
 			$this->data = Database::sql2row($query);
 		}else
 			$this->data = $data;
@@ -69,13 +70,16 @@ class Release extends BaseObjectClass {
 	}
 
 	function getUrl($redirect = false) {
+		$this->load();
 		$id = $redirect ? $this->getDuplicateId() : $this->id;
-		return Config::need('www_path') . '/releases/' . $id;
+		$user = Users::getById($this->data['user_id']);
+		/* @var $user User */
+		return Config::need('www_path') . '/blog/' . $user->data['nick'] . '/' . $id;
 	}
 
 	function getImage() {
 		$this->load();
-		return Config::need('www_path') . '/static/upload/news/' . $this->data['image'];
+		return Config::need('www_path') . '/static/upload/blog/' . $this->data['image'];
 	}
 
 	function getCommentCount() {
@@ -84,6 +88,7 @@ class Release extends BaseObjectClass {
 	}
 
 	function getListData() {
+		$user = Users::getById($this->data['user_id']);
 		$out = array(
 		    'id' => $this->id,
 		    'title' => $this->getTitle(),
@@ -91,8 +96,8 @@ class Release extends BaseObjectClass {
 		    'path' => $this->getUrl(),
 		    'comment_count' => $this->getCommentCount(),
 		    'image' => $this->getImage(),
-		    'path' => Config::need('www_path').'/releases/'.$this->id,
-		    'path_edit' => Config::need('www_path').'/releases/'.$this->id.'/edit',
+		    'path' => Config::need('www_path') . '/blog/' . $user->data['nick'] . '/' . $this->id,
+		    'path_edit' => Config::need('www_path') . '/blog/' . $user->data['nick'] . '/' . $this->id . '/edit',
 		);
 		return $out;
 	}

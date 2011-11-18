@@ -80,10 +80,10 @@ class PageConstructor {
 		/* @var $current_user CurrentUser */
 		XMLClass::$pageNode = XMLClass::createNodeFromObject(array(), false, 'page', false);
 		XMLClass::appendNode(XMLClass::$pageNode, '');
-		
+
 		XMLClass::$accessNode = XMLClass::createNodeFromObject(AccessRules::getRules(), false, 'access', true);
 		XMLClass::appendNode(XMLClass::$accessNode, '');
-		
+
 		XMLClass::$pageNode->setAttribute('current_url', Request::$url);
 		XMLClass::$pageNode->setAttribute('prefix', Config::need('www_path') . '/');
 		XMLClass::$varNode = XMLClass::$xml->createElement('variables');
@@ -150,6 +150,16 @@ class PageConstructor {
 					/* @var $user User */
 					if ($user)
 						return $user->getNickName();
+					break;
+				case 'release-title':
+					$release = Releases::getInstance()->getByIdLoaded((int) $val);
+					/* @var $release Release */
+					return $release->getTitle(1);
+					break;
+				case 'news-title':
+					$newsitem = News::getInstance()->getByIdLoaded((int) $val);
+					/* @var $newsitem NewsItem */
+					return $newsitem->getTitle(1);
 					break;
 				case 'book-title':
 					$book = Books::getInstance()->getByIdLoaded((int) $val);
