@@ -2,10 +2,10 @@
 
 class Blogposts extends Collection {
 
-	public $className = 'Newsitem';
-	public $tableName = 'news';
-	public $itemName = 'newsitem';
-	public $itemsName = 'news';
+	public $className = 'Blogpost';
+	public $tableName = 'blogposts';
+	public $itemName = 'blogpost';
+	public $itemsName = 'blogposts';
 
 	public static function getInstance() {
 		if (!self::$blogs_instance) {

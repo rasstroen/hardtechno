@@ -11,6 +11,7 @@ $includePathes = array(
     $root . 'modules/write',
     $root . 'jmodules',
     $root . 'classes/User',
+    $root . 'classes/Blogs',    
     $root . 'classes/News',
     $root . 'classes/Releases',
     $root . 'classes/Banners',

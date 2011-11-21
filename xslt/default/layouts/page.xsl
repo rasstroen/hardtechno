@@ -17,4 +17,5 @@
 	<xsl:include href="../partials/banners.xsl"/>
 	<xsl:include href="../partials/releases.xsl"/>
 	<xsl:include href="../partials/misc.xsl"/>
+	<xsl:include href="../partials/blog.xsl"/>
 </xsl:stylesheet>

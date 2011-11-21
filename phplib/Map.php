@@ -29,6 +29,7 @@ class Map {
 	    'blog/new' => 'blog/new.xml',
 	    'blog/%d' => 'blog/show.xml',
 	    'blog/%d/edit' => 'blog/edit.xml',
+	    'blog/%d/new' => 'blog/new.xml',
 	    // other
 	    'register' => 'register/index.xml',
 	    'emailconfirm/%d/%s' => 'misc/email_confirm.xml',
@@ -43,6 +44,8 @@ class Map {
 	    'user/%d/edit' => 'user/%s/edit',
 	    'profile/%d' => 'user/%s',
 	    'profile/%d/edit' => 'user/%s/edit',
+	    'blog/%s' => 'blog/%d',
+	    'blog/%s/new' => 'blog/%d/new',
 	);
 
 }

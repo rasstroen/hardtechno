@@ -10,6 +10,7 @@ class Collection {
 	public static $news_instance = false;
 	public static $releases_instance = false;
 	public static $banners_instance = false;
+	public static $blogs_instance = false;
 	//
 	public $items = array();
 	public $from_cache = array();
