@@ -43,6 +43,11 @@ class User {
 			$this->load($data);
 	}
 
+	public function dropMessagesCount() {
+		$cacheName = 'messages_count_' . $this->id;
+		Cache::drop($cacheName);
+	}
+
 	function can($action, $target_user = false) {
 		return AccessRules::can($this, $action, $target_user);
 	}
@@ -160,13 +165,39 @@ class User {
 	}
 
 	// когда юзера зафрендили
-	function onNewFollower() {
+	function onNewFollower($followed_by_id) {
 		
 	}
 
 	// когда юзер зафрендил кого-либо
-	function onNewFollowing() {
+	function onNewFollowing($i_now_follow_id) {
+		// все друзья кроме свежедобавленного должны узнать об этом!
+		$event = new Event();
+		$event->event_FollowingAdd($this->id, $i_now_follow_id);
+		$event->push(array($i_now_follow_id));
+		// а я получаю всю ленту свежедобавленного друга (последние 50 эвентов хотя бы) к себе на стену
+		$wall = MongoDatabase::getUserWall($i_now_follow_id, 0, 50, 'self');
+		foreach ($wall as $wallItem) {
+			if (isset($wallItem['_id']))
+				MongoDatabase::pushEvents($i_now_follow_id, array($this->id), (string) $wallItem['id'], $wallItem['time']);
+		}
+	}
+
+	/**
+	 * меня удалили из друзей
+	 * @param type $id_friend_delete_me
+	 */
+	public function onDeletedFromFriend($id_friend_delete_me) {
 		
+	}
+
+	/**
+	 * я удалил из друзей
+	 * @param type $id_deleted_friend
+	 */
+	public function onDeleteFriend($id_deleted_friend) {
+		// и удаляю все записи этого друга у себя со стены
+		MongoDatabase::deleteWallItemsByOwnerId($this->id, $id_deleted_friend);
 	}
 
 	public function getTheme() {
@@ -190,8 +221,14 @@ class User {
 	public function getLanguage() {
 		return Config::need('default_language');
 	}
+	
+	private function onRegister(){
+		// а не по партнерке ли регистрация?
+
+	}
 
 	function register($nickname, $email, $password) {
+		Database::query('START TRANSACTION');
 		$hash = md5($email . $nickname . $password . time());
 		$query = 'INSERT INTO `users` SET
 			`email`=\'' . $email . '\',
@@ -202,9 +239,12 @@ class User {
 		if (Database::query($query)) {
 			$this->id = Database::lastInsertId();
 			if ($this->id) {
+				$this->onRegister();
+				Database::query('COMMIT');
 				return $hash;
 			}
 		}
+		Database::query('COMMIT');
 		return false;
 	}
 
@@ -253,7 +293,7 @@ class User {
 		}
 		if (!$rowData) {
 			// нет юзера в базе
-			throw new Exception('Такого пользователя не существует', Error::E_USER_NOT_FOUND);
+			throw new Exception('Такого пользователя #' . $this->id . ' не существует', Error::E_USER_NOT_FOUND);
 		}
 
 		$this->id = (int) $rowData['id'];
@@ -284,7 +324,7 @@ class User {
 	}
 
 	public function getRole() {
-		return (int) $this->getProperty('role');
+		return (int) $this->getProperty('role', User::ROLE_ANON);
 	}
 
 	public function getBdayString($default = 'неизвестно') {

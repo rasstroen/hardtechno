@@ -12,7 +12,7 @@ class Users {
 	);
 	private static $users = array();
 	private static $from_cache = array();
-	private static $user_profile_cache_time = 0; // храним профиль любого юзера в кеше столько секунд
+	private static $user_profile_cache_time = 60; // храним профиль любого юзера в кеше столько секунд
 
 	public static function getById($id, $data = false) {
 		if (!is_numeric($id))

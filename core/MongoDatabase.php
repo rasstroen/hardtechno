@@ -80,6 +80,19 @@ class MongoDatabase {
 			return false;
 	}
 
+	public static function getReviewEvent($user_id, $book_id) {
+		$attributes = array(
+		    'user_id' => (int) $user_id,
+		    'book_id' => (int) $book_id,
+		    'type' => array('$in' => array(Event::EVENT_BOOKS_RATE_ADD, Event::EVENT_BOOKS_REVIEW_ADD)),
+		);
+		$result = self::getInstance()->events->findOne($attributes);
+		if ($result)
+			return $result;
+		else
+			return false;
+	}
+
 	public static function findReviewEventData($user_id, $book_id) {
 		$attributes = array(
 		    'user_id' => (int) $user_id,
@@ -95,31 +108,146 @@ class MongoDatabase {
 			return false;
 	}
 
-	public static function findReviewEvents($book_id) {
-		$attributes = array(
-		    'book_id' => (int) $book_id,
-		    'type' => Event::EVENT_BOOKS_REVIEW_ADD,
+	public static function addSimpleComment($type, $book_id, $user_id, $comment) {
+		$criteria = array(
+		    'type' => $type,
 		);
-		$result = self::getInstance()->events->find($attributes);
-		$out = array();
-		foreach ($result as $res) {
-			$out[] = $res;
+		switch ($type) {
+			case BiberLog::TargetType_serie:
+				$criteria['serie_id'] = $book_id;
+				$type_criteria = array('serie_id' => $book_id);
+				break;
+			case BiberLog::TargetType_person:
+				$criteria['author_id'] = $book_id;
+				$type_criteria = array('author_id' => $book_id);
+				break;
+			case BiberLog::TargetType_book:
+				$criteria['book_id'] = $book_id;
+				$type_criteria = array('book_id' => $book_id);
+				break;
 		}
-		return $out;
+
+
+		$res = self::getInstance()->comments->findOne($criteria);
+		$comments = isset($res['comments']) ? $res['comments'] : array();
+
+		$tmp = $criteria;
+		$tmp['user_id'] = $user_id;
+		$tmp['time'] = time();
+		$tmp['comment'] = $comment;
+
+		$comments[] = $tmp;
+		uasort($comments, 'sort_by_time');
+		$commentsCount = count($comments);
+		self::getInstance()->comments->update($criteria, array('$set' => array(
+			'commentsCount' => $commentsCount,
+			'comments' => $comments,
+			'type' => $type,
+			$type_criteria,
+			)), array('upsert' => true));
 	}
 
-	public static function findReviewMarkEvents($book_id) {
-		$attributes = array(
-		    'book_id' => (int) $book_id,
+	public static function getAuthorComments($book_id, $count = 40, $skip = 0) {
+		return self::getBookComments($book_id, $count, $skip, BiberLog::TargetType_person);
+	}
+
+	public static function getSerieComments($book_id, $count = 40, $skip = 0) {
+		return self::getBookComments($book_id, $count, $skip, BiberLog::TargetType_serie);
+	}
+
+	public static function getBookComments($book_id, $count = 40, $skip = 0, $type = BiberLog::TargetType_book) {
+		$criteria = array(
+		    'type' => $type,
+		);
+
+		switch ($type) {
+			case BiberLog::TargetType_serie:
+				$criteria['serie_id'] = $book_id;
+				break;
+			case BiberLog::TargetType_person:
+				$criteria['author_id'] = $book_id;
+				break;
+			case BiberLog::TargetType_book:
+				$criteria['book_id'] = $book_id;
+				break;
+		}
+
+		$order = array('time' => -1);
+
+		$out = array();
+
+		$res = self::getInstance()->comments->find($criteria);
+		$tmp = array();
+		foreach ($res as $row) {
+			$tmp = $row;
+		}
+		if (isset($tmp['comments'])) {
+			$tmp['comments'] = array_slice($tmp['comments'], $skip, $count);
+		}
+
+		$count = isset($tmp['commentsCount']) ? $tmp['commentsCount'] : 0;
+		return array($tmp, $count);
+	}
+
+	public static function findReviewEvents($book_id, $user_id = false, $count = 40, $skip = 0) {
+		$criteria = array(
+		    'type' => Event::EVENT_BOOKS_REVIEW_ADD,
+		);
+		if ($user_id)
+			$criteria['user_id'] = (int) $user_id;
+
+		if ($book_id)
+			$criteria['book_id'] = (int) $book_id;
+
+		$order = array('time' => -1);
+
+		$out = array();
+
+		$res = self::getInstance()->events->find($criteria)->sort($order)->skip($skip)->limit($count);
+		$tmp = array();
+		foreach ($res as $row) {
+			if (isset($row['type']))
+				$row['type'] = Event::$event_type[$row['type']];
+			$row['id'] = $row['_id']->{'$id'};
+			$row['retweet_from'] = 0;
+			$row['owner_id'] = $row['user_id'];
+			$row['wall_time'] = $row['time'];
+			$tmp[] = $row;
+		}
+		$tmp['count'] = $res->count();
+
+		return $tmp;
+	}
+
+	public static function findReviewMarkEvents($book_id, $user_id = false, $count = 40, $skip = 0) {
+
+		$criteria = array(
 		    'type' => Event::EVENT_BOOKS_RATE_ADD,
 		);
-		$result = self::getInstance()->events->find($attributes);
+		if ($user_id)
+			$criteria['user_id'] = (int) $user_id;
+
+		if ($book_id)
+			$criteria['book_id'] = (int) $book_id;
+
+		$order = array('time' => -1);
+
 		$out = array();
-		if ($result)
-			foreach ($result as $res) {
-				$out[] = $res;
-			}
-		return $out;
+
+		$res = self::getInstance()->events->find($criteria)->sort($order)->skip($skip)->limit($count);
+		$tmp = array();
+		foreach ($res as $row) {
+			if (isset($row['type']))
+				$row['type'] = Event::$event_type[$row['type']];
+			$row['id'] = $row['_id']->{'$id'};
+			$row['retweet_from'] = 0;
+			$row['owner_id'] = $row['user_id'];
+			$row['wall_time'] = $row['time'];
+			$tmp[] = $row;
+		}
+		$tmp['count'] = $res->count();
+
+		return $tmp;
 	}
 
 	function findBookReviews($user_ids, $book_id) {
@@ -134,6 +262,16 @@ class MongoDatabase {
 			foreach ($result as $row)
 				$out[$row['user_id']] = $row['_id']->{'$id'};
 		return $out;
+	}
+
+	public static function deleteWallItemsByOwnerId($user_id, $deleted_id) {
+		if (!$user_id || !$deleted_id)
+			return false;
+		$criteria = array(
+		    'user_id' => (int) $user_id,
+		    'owner_id' => (int) $deleted_id,
+		);
+		self::getInstance()->walls->remove($criteria);
 	}
 
 	public static function deleteWallItemsByEventId($event_id) {
@@ -156,6 +294,9 @@ class MongoDatabase {
 
 	public static function pushEvents($owner_id, $user_ids, $event_id, $time, $retweet_from = 0) {
 		foreach ($user_ids as $user_id) {
+			if ($event_id instanceof MongoId) {
+				$event_id = $event_id->{'$id'};
+			}
 			$attributes = array('id' => $event_id, 'user_id' => (int) $user_id, 'time' => (int) $time, 'owner_id' => (int) $owner_id, 'retweet_from' => (int) $retweet_from);
 			self::getInstance()->walls->insert($attributes);
 		}
@@ -244,6 +385,11 @@ class MongoDatabase {
 		return $commentsCount;
 	}
 
+	/**
+	 *
+	 * @param array $wall - массив id эвентов
+	 * @return type 
+	 */
 	public static function getWallEvents($wall) {
 		$count = isset($wall['count']) ? $wall['count'] : 0;
 		unset($wall['count']);
@@ -251,7 +397,8 @@ class MongoDatabase {
 			return array();
 
 		foreach ($wall as $wall_event) {
-			$ids[$wall_event['id']] = new MongoId($wall_event['id']);
+			if (isset($wall_event['id']))
+				$ids[$wall_event['id']] = new MongoId($wall_event['id']);
 		}
 		if (!count($ids))
 			return array();
@@ -292,6 +439,7 @@ class MongoDatabase {
 		$res = self::getInstance()->events->find($criteria)->sort($order)->skip($skip)->limit($count);
 		$tmp = array();
 		foreach ($res as $row) {
+			if(!isset($row['user_id'])) continue;
 			if (isset($row['type']))
 				$row['type'] = Event::$event_type[$row['type']];
 			$row['id'] = $row['_id']->{'$id'};
@@ -305,6 +453,12 @@ class MongoDatabase {
 		return $tmp;
 	}
 
+	/**
+	 *
+	 * @param type $id
+	 * @param type $user_id
+	 * @return type 
+	 */
 	public static function getUserWallItem($id, $user_id) {
 		$criteria = array('user_id' => (int) $user_id);
 		$criteria['id'] = $id;

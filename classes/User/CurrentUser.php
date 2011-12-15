@@ -27,6 +27,7 @@ class CurrentUser extends User {
 		$this->load();
 		$out = $this->profile_xml;
 		$out['new_messages'] = $this->getNewMessagesCount();
+		$out['change_nickname'] = $this->checkNickChanging();
 		return $out;
 	}
 
@@ -34,7 +35,7 @@ class CurrentUser extends User {
 		$cacheName = 'messages_count_' . $this->id;
 		if (!isset($this->new_messages_count)) {
 			if (($this->new_messages_count = Cache::get($cacheName)) === null) {
-				$query = 'SELECT COUNT(1) FROM `users_messages_index` WHERE `id_recipient`=' . $this->id . ' AND `is_new`=1';
+				$query = 'SELECT COUNT(1) FROM `users_messages_index` WHERE `id_recipient`=' . $this->id . ' AND `is_new`=1 AND `is_deleted`=0';
 				$this->new_messages_count = Database::sql2single($query);
 				Cache::set($cacheName, (int) $this->new_messages_count, $this->new_messages_cachetime);
 			}
@@ -61,6 +62,7 @@ class CurrentUser extends User {
 		Database::query($query);
 		Cache::drop('auth_' . $this->id);
 		$this->setProperty('lastLogin', time());
+		$this->setProperty('lastIp', Request::$ip);
 		$this->setAuthCookie($hash);
 	}
 
@@ -72,6 +74,12 @@ class CurrentUser extends User {
 			return $this->getAvailableNickname($nickname, $additional . rand(1, 99));
 		}
 		return $nickname;
+	}
+
+	public function setCookie($name, $value, $time = false) {
+		if (!$time)
+			$time = time() + 5 * 24 * 60 * 60;
+		Request::headerCookie($name, $value, $time, '/', Config::need('www_domain'), false, true);
 	}
 
 	private function setAuthCookie($value, $delete = false) {

@@ -75,9 +75,46 @@ class PageConstructor {
 		}
 	}
 
+	function getMessageNode() {
+		$messageA = array();
+		$node = false;
+		if ($r = Request::get('redirect')) {
+			list($type, $id) = explode('_', $r);
+			switch ($type) {
+				case 's':
+					$query = 'SELECT * FROM `series` WHERE `id`=' . (int) $id;
+					$res = Database::sql2row($query);
+					if ($res && isset($res['is_s_duplicate']) && $res['is_s_duplicate']) {
+						$messageA = array('html' => 'Cерия «' . $res['title'] . '» была склеена с данной серией');
+						$node = XMLClass::createNodeFromObject($messageA, false, 'message', true);
+					}
+					break;
+				case 'b':
+					$query = 'SELECT * FROM `book` WHERE `id`=' . (int) $id;
+					$book = new Book((int)$id);
+					if ($book->getDuplicateId()) {
+						$messageA = array('html' => 'Книга «' . $book->getTitle(true) . '» была склеена с данной книгой');
+						$node = XMLClass::createNodeFromObject($messageA, false, 'message', true);
+					}
+					break;
+				case 'a':
+					$person = new Person((int)$id);
+					if ($person->getDuplicateId()) {
+						$messageA = array('html' => 'Автор «' . $person->getName(). '» был склеен с данным автором');
+						$node = XMLClass::createNodeFromObject($messageA, false, 'message', true);
+					}
+					break;
+			}
+		}
+
+		return $node;
+	}
+
 	public function process() {
 		global $current_user;
 		/* @var $current_user CurrentUser */
+		if ($pid = Request::get('pid'))
+			Statistics::setPartnerCookie($pid);
 		XMLClass::$pageNode = XMLClass::createNodeFromObject(array(), false, 'page', false);
 		XMLClass::appendNode(XMLClass::$pageNode, '');
 
@@ -85,6 +122,10 @@ class PageConstructor {
 		XMLClass::appendNode(XMLClass::$accessNode, '');
 
 		XMLClass::$pageNode->setAttribute('current_url', Request::$url);
+
+		if ($mn = $this->getMessageNode())
+			XMLClass::$pageNode->appendChild($mn);
+
 		XMLClass::$pageNode->setAttribute('prefix', Config::need('www_path') . '/');
 		XMLClass::$varNode = XMLClass::$xml->createElement('variables');
 		foreach (Request::$get_normal as $f => $v) {
@@ -150,16 +191,6 @@ class PageConstructor {
 					/* @var $user User */
 					if ($user)
 						return $user->getNickName();
-					break;
-				case 'release-title':
-					$release = Releases::getInstance()->getByIdLoaded((int) $val);
-					/* @var $release Release */
-					return $release->getTitle(1);
-					break;
-				case 'news-title':
-					$newsitem = News::getInstance()->getByIdLoaded((int) $val);
-					/* @var $newsitem NewsItem */
-					return $newsitem->getTitle(1);
 					break;
 				case 'book-title':
 					$book = Books::getInstance()->getByIdLoaded((int) $val);
@@ -230,9 +261,4 @@ class PageConstructor {
 		    'mode' => $mode
 		);
 	}
-
-	private function addXsltNullFile($moduleName) {
-		$this->xsltFiles[$moduleName] = 'null';
-	}
-
 }

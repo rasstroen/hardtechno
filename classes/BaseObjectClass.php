@@ -2,7 +2,7 @@
 
 class BaseObjectClass {
 
-	public $exists = false;
+	public $exists = null;
 	public $fieldsMap = array();
 	public $id;
 

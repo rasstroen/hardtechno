@@ -22,6 +22,7 @@ class Request {
 	private static $pass;
 	private static $real_path = -2;
 	public static $path_history = '';
+	public static $ip = 'unknown';
 
 	public static function pass($f, $v = false) {
 		if ($v === false)
@@ -32,13 +33,13 @@ class Request {
 	/**
 	 *
 	 * получаем имя переменной для сохранения в кеше xml дерева модуля
-	 * 
+	 *
 	 * @param type $moduleName
 	 * @param type $moduleAction
 	 * @param type $moduleMode
 	 * @param type $params
-	 * 
-	 * @return string имя переменной 
+	 *
+	 * @return string имя переменной
 	 */
 	public static function getModuleUniqueHash($moduleName = '', $moduleAction = '', $moduleMode = '', $params = array()) {
 		$cacheName = $moduleName . '|' . $moduleAction . '|' . $moduleMode;
@@ -57,6 +58,13 @@ class Request {
 	public static function initialize($deep = false) {
 		if (!$deep && self::$initialized)
 			return;
+		$headers = apache_request_headers();
+		if (array_key_exists('X-Forwarded-For', $headers)) {
+			$hostname = $headers['X-Forwarded-For'];
+		} else {
+			$hostname = $_SERVER["REMOTE_ADDR"];
+		}
+		self::$ip = $hostname;
 		self::$path_history = '';
 		self::$initialized = true;
 		// принимаем uri
@@ -93,6 +101,11 @@ class Request {
 			}
 		unset($_POST);
 		unset($_GET);
+		self::afterAll();
+	}
+
+	public static function afterAll() {
+		
 	}
 
 	public static function is_on_main_page() {
